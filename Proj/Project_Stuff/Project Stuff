@@ -28,3 +28,26 @@ setPecaColuna(N, Peca, [Peca1|Resto], [Peca1|Mais]) :-
     N > 1,
     Next is N-1,
     setPecaColuna(Next, Peca, Resto, Mais).
+
+///////////////////////////////////////
+
+append([], lista, lista).
+append([H|T], lista, [H|Resto]):-
+    append(T, lista, Resto).
+
+reverse([],[]).
+reverse([X|Resto], Invertida):-
+    reverse(Resto, RestoInv),
+    append(RestoInv, [X], Invertida).
+
+
+
+/////////////////////////////////////////
+
+
+slice(Lista, Pos1, Pos2, Resultado).
+
+/* ex: slice([1,2,3,4,5,6,7], 3, 6, L)
+        L = [3,4,5,6]                   */
+
+
