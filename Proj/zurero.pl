@@ -1,35 +1,35 @@
 %% includes
 
-:- include('boardGame.pl').
+:- include('boardPrinter.pl').
 :- include('utilities.pl').
-
+:- include('menus.pl').
+:- include('gameLogic.pl').
 
 zurero :-
-    initialBoard(Tab),
-    repeat, 
-        display_game(Tab),
-        play(Direction,Num),
-        terminate(Direction).
+    mainMenu.
 
-play(Direction,Num) :-
+
+startGame :-
+    initialBoard(Tab),
+    gameLoop(Tab).
+
+gameLoop(Tab) :-
+    display_game(Tab),
+    play(Direction,Num,Tab,NewTab),
+    terminate(Direction,NewTab).
+
+play(Direction,Num,Tab,NewTab) :-
     
     repeat,
         write('Write your command: '),
-        read(Input),
-        get_code(Trash),
+        readPlay(Input),
         atom_chars(Input, Chars),
         Chars = [Direction|Aux],
         
         (Direction == 'q' -> true;
         checkCommand(Direction,Aux),
-        interpret(Aux,Num),
-        write('Direction: '),
-        write(Direction),
-        nl,
-        write('Number: '),
-        write(Num),
-        nl),
-        !.
+        interpret(Aux,Num),!,
+        update(Direction,Num,Tab,NewTab)).
 
 
 interpret(X,Num):-
@@ -37,11 +37,32 @@ interpret(X,Num):-
     Num is N.
 
 
+update('l',Coord,Tab,NewTab):- playLeft(Coord,Tab,NewTab).
 
-getChar(Input):-
-	get_char(Input),
-	get_char(_).
 
+
+charToIndex(Char,Index) :-
+    (
+        Char == 'A' -> Index is 1;
+        Char == 'B' -> Index is 2;
+        Char == 'C' -> Index is 3;
+        Char == 'D' -> Index is 4;
+        Char == 'E' -> Index is 5;
+        Char == 'F' -> Index is 6;
+        Char == 'G' -> Index is 7;
+        Char == 'H' -> Index is 8;
+        Char == 'I' -> Index is 9;
+        Char == 'J' -> Index is 10;
+        Char == 'K' -> Index is 11;
+        Char == 'L' -> Index is 12;
+        Char == 'M' -> Index is 13;
+        Char == 'N' -> Index is 14;
+        Char == 'O' -> Index is 15;
+        Char == 'P' -> Index is 16;
+        Char == 'Q' -> Index is 17;
+        Char == 'R' -> Index is 18;
+        Char == 'S' -> Index is 19
+        ).
 
 checkCommand(D,A) :-
     length(A,L),
@@ -51,4 +72,5 @@ checkCommand(D,A) :-
         true
         ).
 
-terminate('q') :- true;fail,!.
+terminate('q',_) :- true.
+terminate(_,Tab) :- gameLoop(Tab).
