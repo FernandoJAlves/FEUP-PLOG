@@ -4,6 +4,7 @@
 :- include('utilities.pl').
 :- include('menus.pl').
 :- include('gameLogic.pl').
+:- use_module(library(lists)).
 
 zurero :-
     mainMenu.
@@ -38,6 +39,7 @@ interpret(X,Num):-
 
 
 update('l',Coord,Tab,NewTab):- playLeft(Coord,Tab,NewTab).
+update('r',Coord,Tab,NewTab):- playRight(Coord,Tab,NewTab).
 
 
 

@@ -2,7 +2,6 @@
 
 getPeca(Nlinha, Ncoluna, Tabuleiro, Peca).
 
-
 getPeca(Nlinha,Ncoluna,Tab,Peca) :-
     nth1(Nlinha,Tab,Linha),
     nth1(Ncoluna,Linha,Peca).
@@ -46,19 +45,36 @@ append([H|T],Lista,Lista):-
 
 playLeft(Index,Tab,NewTab) :-
     nth1(Index,Tab,Linha),
-    ((nth1(I2,Linha,Elem),Elem \= emptySpace,!) -> slideStone(Index,I2,Linha,Tab,Elem,NewTab)).
+    ((nth1(I2,Linha,Elem),Elem \= emptySpace,!) -> slideStoneFromLeft(Index,I2,Linha,Tab,Elem,NewTab)).
+
+playRight(Index,Tab,NewTab) :-
+    nth1(Index,Tab,Linha),
+    reverse(Linha,Temp),
+    ((nth1(Aux,Temp,Elem),Elem \= emptySpace,!) -> I2 is 20-Aux,slideStoneFromRight(Index,I2,Linha,Tab,Elem,NewTab)).
+
+playUp(Index,Tab,NewTab).
+playDown(Index,Tab,NewTab).
 
 
-slideStone(Index,I2,Linha,Tab,Stone,NewTab) :-
+slideStoneFromLeft(Index,I2,Linha,Tab,Stone,NewTab) :-
     Num1 is I2+1,
     Num2 is I2-1,
     nth1(Num1,Linha,Elem),
-    print_cell(Elem),
     (
         Elem \= emptySpace -> setPeca(Index,Num2,whiteStone,Tab,NewTab);
         setPeca(Index,I2,whiteStone,Tab,Tab1),
         setPeca(Index,Num1,Stone,Tab1,NewTab)
         ).
+
+slideStoneFromRight(Index,I2,Linha,Tab,Stone,NewTab) :-
+    Num1 is I2-1,
+    Num2 is I2+1,
+    nth1(Num1,Linha,Elem),
+        (
+            Elem \= emptySpace -> setPeca(Index,Num2,whiteStone,Tab,NewTab);
+            setPeca(Index,I2,whiteStone,Tab,Tab1),
+            setPeca(Index,Num1,Stone,Tab1,NewTab)
+            ).
 
 
 
