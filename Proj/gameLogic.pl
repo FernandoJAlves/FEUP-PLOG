@@ -36,74 +36,70 @@ setPeca(Linha):-
     retract(cell(Linha,Coluna,_)),
     assert(cell(Linha,Coluna,Peca)).
 
-append([],Lista,Lista).
-
-append([H|T],Lista,Lista):-
-    append(T,Lista,Resto).
-
-
-
 
 playLeft(PlayerTurn,I,Tab,NewTab) :-
     Index is 20-I,
     nth1(Index,Tab,Linha),
-    ((nth1(I2,Linha,Elem),Elem \= emptySpace,!) -> slideStoneFromLeft(Index,I2,Linha,Tab,Elem,NewTab)).
+    ((nth1(I2,Linha,Elem),Elem \= emptySpace,!) -> slideStoneFromLeft(PlayerTurn,Index,I2,Linha,Tab,Elem,NewTab)).
 
 playRight(PlayerTurn,I,Tab,NewTab) :-
     Index is 20-I,
     nth1(Index,Tab,Linha),
     reverse(Linha,Temp),
-    ((nth1(Aux,Temp,Elem),Elem \= emptySpace,!) -> I2 is 20-Aux,slideStoneFromRight(Index,I2,Linha,Tab,Elem,NewTab)).
+    ((nth1(Aux,Temp,Elem),Elem \= emptySpace,!) -> I2 is 20-Aux,slideStoneFromRight(PlayerTurn,Index,I2,Linha,Tab,Elem,NewTab)).
 
 playUp(PlayerTurn,Index,Tab,NewTab) :-
-    ((getPeca(I2,Index,Tab,Elem),Elem \= emptySpace,!) -> slideStoneFromUp(I2,Index,Elem,Tab,NewTab)).
+    ((getPeca(I2,Index,Tab,Elem),Elem \= emptySpace,!) -> slideStoneFromUp(PlayerTurn,I2,Index,Elem,Tab,NewTab)).
 
 playDown(PlayerTurn,Index,Tab,NewTab) :-
     reverse(Tab,Temp),
-    ((getPeca(Aux,Index,Temp,Elem),Elem \= emptySpace,!) -> I2 is 20-Aux,slideStoneFromDown(I2,Index,Elem,Tab,NewTab)).
+    ((getPeca(Aux,Index,Temp,Elem),Elem \= emptySpace,!) -> I2 is 20-Aux,slideStoneFromDown(PlayerTurn,I2,Index,Elem,Tab,NewTab)).
 
 
-playDown(Index,Tab,NewTab).
 
 
-slideStoneFromLeft(Index,I2,Linha,Tab,Stone,NewTab) :-
+slideStoneFromLeft(PlayerTurn,Index,I2,Linha,Tab,Stone,NewTab) :-
     Num1 is I2+1,
     Num2 is I2-1,
     nth1(Num1,Linha,Elem),
+    getPlayerSymbol(PlayerTurn,Symbol),
     (
-        Elem \= emptySpace -> setPeca(Index,Num2,whiteStone,Tab,NewTab);
-        setPeca(Index,I2,whiteStone,Tab,Tab1),
+        Elem \= emptySpace -> setPeca(Index,Num2,Symbol,Tab,NewTab);
+        setPeca(Index,I2,Symbol,Tab,Tab1),
         setPeca(Index,Num1,Stone,Tab1,NewTab)
         ).
 
-slideStoneFromRight(Index,I2,Linha,Tab,Stone,NewTab) :-
+slideStoneFromRight(PlayerTurn,Index,I2,Linha,Tab,Stone,NewTab) :-
     Num1 is I2-1,
     Num2 is I2+1,
     nth1(Num1,Linha,Elem),
+    getPlayerSymbol(PlayerTurn,Symbol),
         (
-            Elem \= emptySpace -> setPeca(Index,Num2,whiteStone,Tab,NewTab);
-            setPeca(Index,I2,whiteStone,Tab,Tab1),
+            Elem \= emptySpace -> setPeca(Index,Num2,Symbol,Tab,NewTab);
+            setPeca(Index,I2,Symbol,Tab,Tab1),
             setPeca(Index,Num1,Stone,Tab1,NewTab)
             ).
 
 
-slideStoneFromUp(I2,Index,Stone,Tab,NewTab) :-
+slideStoneFromUp(PlayerTurn,I2,Index,Stone,Tab,NewTab) :-
     Num1 is I2+1,
     Num2 is I2-1,
     getPeca(Num1,Index,Tab,NextElem),
+    getPlayerSymbol(PlayerTurn,Symbol),
     (
-        NextElem \= emptySpace -> setPeca(Num2,Index,whiteStone,Tab,NewTab);
-        setPeca(I2,Index,whiteStone,Tab,Tab1),
+        NextElem \= emptySpace -> setPeca(Num2,Index,Symbol,Tab,NewTab);
+        setPeca(I2,Index,Symbol,Tab,Tab1),
         setPeca(Num1,Index,Stone,Tab1,NewTab)
         ).
 
-slideStoneFromDown(I2,Index,Stone,Tab,NewTab) :-
+slideStoneFromDown(PlayerTurn,I2,Index,Stone,Tab,NewTab) :-
     Num1 is I2-1,
     Num2 is I2+1,
     getPeca(Num1,Index,Tab,NextElem),
+    getPlayerSymbol(PlayerTurn,Symbol),
     (
-        NextElem \= emptySpace -> setPeca(Num2,Index,whiteStone,Tab,NewTab);
-        setPeca(I2,Index,whiteStone,Tab,Tab1),
+        NextElem \= emptySpace -> setPeca(Num2,Index,Symbol,Tab,NewTab);
+        setPeca(I2,Index,Symbol,Tab,Tab1),
         setPeca(Num1,Index,Stone,Tab1,NewTab)
     ).
 

@@ -23,6 +23,7 @@ gameLoop(PlayerTurn,Tab) :-
 play(PlayerTurn,PlayerType,Direction,Tab,NewTab) :-
     
     repeat,
+        playerMessage(PlayerTurn),nl,
         write('Write your command: '),
         readPlay(Input),
         atom_chars(Input, Chars),
@@ -41,10 +42,11 @@ interpret('d',List,Num) :- charToIndex(List,Num).
 interpret('q',List,Num) :- true.
 interpret(_,List,Num) :- write('Invalid Direction. You can only choose u(up), d(down), l(left) or r(right).'),nl,fail.
 
+playerMessage(player1):- write('Player 1 Turn. You are the white stones').
+playerMessage(player2):- write('Player 2 Turn. You are the black stones').
 
 
 interpretAux(X,Num):-
-    write('Begin'),nl,
     length(X,L),
     (
         L < 1 -> write('You have to select one position between 1 and 19'),nl,fail;
