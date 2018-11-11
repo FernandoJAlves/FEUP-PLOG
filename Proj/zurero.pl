@@ -12,14 +12,15 @@ zurero :-
 
 startGame :-
     initialBoard(Tab),
-    gameLoop(Tab).
+    gameLoop(player1,Tab).
 
-gameLoop(Tab) :-
+gameLoop(PlayerTurn,Tab) :-
     display_game(Tab),
-    play(Direction,Num,Tab,NewTab),
+    play(PlayerTurn,PlayerType,Direction,Tab,NewTab),
     terminate(Direction,NewTab).
 
-play(Direction,Num,Tab,NewTab) :-
+
+play(PlayerTurn,PlayerType,Direction,Tab,NewTab) :-
     
     repeat,
         write('Write your command: '),
@@ -28,22 +29,48 @@ play(Direction,Num,Tab,NewTab) :-
         Chars = [Direction|Aux],
         
         (Direction == 'q' -> true;
-        checkCommand(Direction,Aux),
-        interpret(Aux,Num),!,
-        update(Direction,Num,Tab,NewTab)).
+        interpret(Direction,Aux,Num),!,
+        update(PlayerTurn,Direction,Num,Tab,NewTab)).
 
 
-interpret(X,Num):-
+
+interpret('l',List,Num) :- interpretAux(List,Num).
+interpret('r',List,Num) :- interpretAux(List,Num).
+interpret('u',List,Num) :- charToIndex(List,Num).
+interpret('d',List,Num) :- charToIndex(List,Num).
+interpret('q',List,Num) :- true.
+interpret(_,List,Num) :- write('Invalid Direction. You can only choose u(up), d(down), l(left) or r(right).'),nl,fail.
+
+
+
+interpretAux(X,Num):-
+    write('Begin'),nl,
+    length(X,L),
+    (
+        L < 1 -> write('You have to select one position between 1 and 19'),nl,fail;
+        true
+    ),
+    
+    checkCharList(X),
     number_chars(N,X),
-    Num is N.
+    Num is N,
+    (
+        N > 19 -> write('Invalid Input: You have to select one position between 1 and 19'),nl,fail;
+        true
+        ).
+    
 
 
-update('l',Coord,Tab,NewTab):- playLeft(Coord,Tab,NewTab).
-update('r',Coord,Tab,NewTab):- playRight(Coord,Tab,NewTab).
+update(PlayerTurn,'l',Coord,Tab,NewTab):- playLeft(PlayerTurn,Coord,Tab,NewTab).
+update(PlayerTurn,'r',Coord,Tab,NewTab):- playRight(PlayerTurn,Coord,Tab,NewTab).
+update(PlayerTurn,'u',Coord,Tab,NewTab):- playUp(PlayerTurn,Coord,Tab,NewTab).
+update(PlayerTurn,'d',Coord,Tab,NewTab):- playDown(PlayerTurn,Coord,Tab,NewTab).
+update(PlayerTurn,'q',Coord,Tab,NewTab):- true.
+update(PlayerTurn,_,Coord,Tab,NewTab):- write('Invalid Direction. You can only choose u(up), d(down), l(left) or r(right).'),nl,fail.
 
 
 
-charToIndex(Char,Index) :-
+charToIndex([Char|_],Index) :-
     (
         Char == 'A' -> Index is 1;
         Char == 'B' -> Index is 2;
@@ -63,16 +90,9 @@ charToIndex(Char,Index) :-
         Char == 'P' -> Index is 16;
         Char == 'Q' -> Index is 17;
         Char == 'R' -> Index is 18;
-        Char == 'S' -> Index is 19
-        ).
-
-checkCommand(D,A) :-
-    length(A,L),
-    (
-        L < 1 -> write('You have to select one position'),nl,fail;
-        D \= 'u',D \= 'l',D \= 'r',D \= 'd',D \= 'q' -> write('Invalid Direction'),nl,fail;
-        true
+        Char == 'S' -> Index is 19;
+        write('Invalid Input: you can only choose a letter between A and S.'),nl,fail
         ).
 
 terminate('q',_) :- true.
-terminate(_,Tab) :- gameLoop(Tab).
+terminate(_,Tab) :- changeTurn(Player,NextPlayer),gameLoop(NextPlayer,Tab).

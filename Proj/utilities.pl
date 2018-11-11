@@ -18,3 +18,12 @@ readChar(Input):-
 readPlay(Input) :-
 	read(Input),
 	get_code(_).
+
+
+checkCharList([]).
+checkCharList([Char|Rest]) :-
+	write(Char),nl,
+	(
+		Char @>= '0', Char @=< '9' -> true,checkCharList(Rest);
+		write('Invalid Input: After the direction you mustc choose a number between 1 a 19'),fail
+		).

@@ -1,6 +1,5 @@
 :- dynamic cell/3.
 
-getPeca(Nlinha, Ncoluna, Tabuleiro, Peca).
 
 getPeca(Nlinha,Ncoluna,Tab,Peca) :-
     nth1(Nlinha,Tab,Linha),
@@ -12,6 +11,8 @@ getLinha(N,[_|Resto],Linha) :-
     N > 1,
     Next is N-1,
     getLinha(Next,Resto,Linha).
+
+
 
 setPeca(1, ElemCol, NewElem, [RowAtTheHead|RemainingRows], [NewRowAtTheHead|RemainingRows]):-
 	setPecaLinha(ElemCol, NewElem, RowAtTheHead, NewRowAtTheHead).
@@ -43,16 +44,25 @@ append([H|T],Lista,Lista):-
 
 
 
-playLeft(Index,Tab,NewTab) :-
+playLeft(PlayerTurn,I,Tab,NewTab) :-
+    Index is 20-I,
     nth1(Index,Tab,Linha),
     ((nth1(I2,Linha,Elem),Elem \= emptySpace,!) -> slideStoneFromLeft(Index,I2,Linha,Tab,Elem,NewTab)).
 
-playRight(Index,Tab,NewTab) :-
+playRight(PlayerTurn,I,Tab,NewTab) :-
+    Index is 20-I,
     nth1(Index,Tab,Linha),
     reverse(Linha,Temp),
     ((nth1(Aux,Temp,Elem),Elem \= emptySpace,!) -> I2 is 20-Aux,slideStoneFromRight(Index,I2,Linha,Tab,Elem,NewTab)).
 
-playUp(Index,Tab,NewTab).
+playUp(PlayerTurn,Index,Tab,NewTab) :-
+    ((getPeca(I2,Index,Tab,Elem),Elem \= emptySpace,!) -> slideStoneFromUp(I2,Index,Elem,Tab,NewTab)).
+
+playDown(PlayerTurn,Index,Tab,NewTab) :-
+    reverse(Tab,Temp),
+    ((getPeca(Aux,Index,Temp,Elem),Elem \= emptySpace,!) -> I2 is 20-Aux,slideStoneFromDown(I2,Index,Elem,Tab,NewTab)).
+
+
 playDown(Index,Tab,NewTab).
 
 
@@ -77,4 +87,28 @@ slideStoneFromRight(Index,I2,Linha,Tab,Stone,NewTab) :-
             ).
 
 
+slideStoneFromUp(I2,Index,Stone,Tab,NewTab) :-
+    Num1 is I2+1,
+    Num2 is I2-1,
+    getPeca(Num1,Index,Tab,NextElem),
+    (
+        NextElem \= emptySpace -> setPeca(Num2,Index,whiteStone,Tab,NewTab);
+        setPeca(I2,Index,whiteStone,Tab,Tab1),
+        setPeca(Num1,Index,Stone,Tab1,NewTab)
+        ).
 
+slideStoneFromDown(I2,Index,Stone,Tab,NewTab) :-
+    Num1 is I2-1,
+    Num2 is I2+1,
+    getPeca(Num1,Index,Tab,NextElem),
+    (
+        NextElem \= emptySpace -> setPeca(Num2,Index,whiteStone,Tab,NewTab);
+        setPeca(I2,Index,whiteStone,Tab,Tab1),
+        setPeca(Num1,Index,Stone,Tab1,NewTab)
+    ).
+
+
+getPlayerSymbol(player1,whiteStone).
+getPlayerSymbol(player2,blackStone).
+changeTurn(player1,player2).
+changeTurn(player2,player1).
