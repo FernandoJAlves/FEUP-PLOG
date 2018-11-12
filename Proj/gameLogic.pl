@@ -106,5 +106,6 @@ slideStoneFromDown(PlayerTurn,I2,Index,Stone,Tab,NewTab) :-
 
 getPlayerSymbol(player1,whiteStone).
 getPlayerSymbol(player2,blackStone).
+
 changeTurn(player1,player2).
 changeTurn(player2,player1).

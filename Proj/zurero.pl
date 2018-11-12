@@ -6,6 +6,9 @@
 :- include('gameLogic.pl').
 :- use_module(library(lists)).
 
+player(player1).
+player(player2).
+
 zurero :-
     mainMenu.
 
@@ -17,10 +20,10 @@ startGame :-
 gameLoop(PlayerTurn,Tab) :-
     display_game(Tab),
     play(PlayerTurn,PlayerType,Direction,Tab,NewTab),
-    terminate(Direction,NewTab).
+    terminate(Direction,PlayerTurn,NewTab).
 
 
-play(PlayerTurn,PlayerType,Direction,Tab,NewTab) :-
+play(PlayerTurn,human,Direction,Tab,NewTab) :-
     
     repeat,
         playerMessage(PlayerTurn),nl,
@@ -32,6 +35,8 @@ play(PlayerTurn,PlayerType,Direction,Tab,NewTab) :-
         (Direction == 'q' -> true;
         interpret(Direction,Aux,Num),!,
         update(PlayerTurn,Direction,Num,Tab,NewTab)).
+
+play(PlayerTurn,bot,Direction,Tab,NewTab).
 
 
 
@@ -96,5 +101,5 @@ charToIndex([Char|_],Index) :-
         write('Invalid Input: you can only choose a letter between A and S.'),nl,fail
         ).
 
-terminate('q',_) :- true.
-terminate(_,Tab) :- changeTurn(Player,NextPlayer),gameLoop(NextPlayer,Tab).
+terminate('q',Player,_) :- true.
+terminate(_,Player,Tab) :- changeTurn(Player,NextPlayer),gameLoop(NextPlayer,Tab).
