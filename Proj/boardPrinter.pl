@@ -3,6 +3,9 @@ display_game(Board):-
 	print_tab(Board,L),
 	write('Black Stones: '),
 	printBlackList,
+	nl,
+	write('White Stones: '),
+	printWhiteList,
 	nl.
 
 initialBoard([
@@ -115,4 +118,7 @@ Size1 is Size - 1,
 print_barras(Size1). 
 
 printBlackList :- 
-	(blackCell(X,Y) -> write(X),write(', '),write(Y), write(' ,')).
+	(blackCell(X,Y),write('('),write(X),write(', '),write(Y), write(')'),write(','),fail;true).
+
+printWhiteList :- 
+	(whiteCell(X,Y),write('('),write(X),write(', '),write(Y), write(')'),write(','),fail;true).

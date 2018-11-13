@@ -66,7 +66,7 @@ slideStoneFromLeft(PlayerTurn,Index,I2,Linha,Tab,Stone,NewTab) :-
     nth1(Num1,Linha,Elem),
     getPlayerSymbol(PlayerTurn,Symbol),
     (
-        Elem \= emptySpace -> setPeca(Index,Num2,Symbol,Tab,NewTab);
+        Elem \= emptySpace -> setPeca(Index,Num2,Symbol,Tab,NewTab),storeCell(Symbol,Index,Num2);
         setPeca(Index,I2,Symbol,Tab,Tab1),
         setPeca(Index,Num1,Stone,Tab1,NewTab),
         rmCell(Stone,Index,I2),
@@ -80,7 +80,7 @@ slideStoneFromRight(PlayerTurn,Index,I2,Linha,Tab,Stone,NewTab) :-
     nth1(Num1,Linha,Elem),
     getPlayerSymbol(PlayerTurn,Symbol),
     (
-        Elem \= emptySpace -> setPeca(Index,Num2,Symbol,Tab,NewTab);
+        Elem \= emptySpace -> setPeca(Index,Num2,Symbol,Tab,NewTab),storeCell(Symbol,Index,Num2);
         setPeca(Index,I2,Symbol,Tab,Tab1),
         setPeca(Index,Num1,Stone,Tab1,NewTab),
         rmCell(Stone,Index,I2),
@@ -95,7 +95,7 @@ slideStoneFromUp(PlayerTurn,I2,Index,Stone,Tab,NewTab) :-
     getPeca(Num1,Index,Tab,NextElem),
     getPlayerSymbol(PlayerTurn,Symbol),
     (
-        NextElem \= emptySpace -> setPeca(Num2,Index,Symbol,Tab,NewTab);
+        NextElem \= emptySpace -> setPeca(Num2,Index,Symbol,Tab,NewTab),storeCell(Symbol,Num2,Index);
         setPeca(I2,Index,Symbol,Tab,Tab1),
         setPeca(Num1,Index,Stone,Tab1,NewTab),
         rmCell(Stone,I2,Index),
