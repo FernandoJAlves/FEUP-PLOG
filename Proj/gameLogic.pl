@@ -1,4 +1,5 @@
-:- dynamic cell/3.
+:- dynamic blackCell/2.
+:- dynamic whiteCell/2.
 
 
 getPeca(Nlinha,Ncoluna,Tab,Peca) :-
@@ -59,6 +60,7 @@ playDown(PlayerTurn,Index,Tab,NewTab) :-
 
 
 slideStoneFromLeft(PlayerTurn,Index,I2,Linha,Tab,Stone,NewTab) :-
+    
     Num1 is I2+1,
     Num2 is I2-1,
     nth1(Num1,Linha,Elem),
@@ -66,7 +68,10 @@ slideStoneFromLeft(PlayerTurn,Index,I2,Linha,Tab,Stone,NewTab) :-
     (
         Elem \= emptySpace -> setPeca(Index,Num2,Symbol,Tab,NewTab);
         setPeca(Index,I2,Symbol,Tab,Tab1),
-        setPeca(Index,Num1,Stone,Tab1,NewTab)
+        setPeca(Index,Num1,Stone,Tab1,NewTab),
+        rmCell(Stone,Index,I2),
+        storeCell(Symbol,Index,I2),
+        storeCell(Stone,Index,Num1)
         ).
 
 slideStoneFromRight(PlayerTurn,Index,I2,Linha,Tab,Stone,NewTab) :-
@@ -74,11 +79,14 @@ slideStoneFromRight(PlayerTurn,Index,I2,Linha,Tab,Stone,NewTab) :-
     Num2 is I2+1,
     nth1(Num1,Linha,Elem),
     getPlayerSymbol(PlayerTurn,Symbol),
-        (
-            Elem \= emptySpace -> setPeca(Index,Num2,Symbol,Tab,NewTab);
-            setPeca(Index,I2,Symbol,Tab,Tab1),
-            setPeca(Index,Num1,Stone,Tab1,NewTab)
-            ).
+    (
+        Elem \= emptySpace -> setPeca(Index,Num2,Symbol,Tab,NewTab);
+        setPeca(Index,I2,Symbol,Tab,Tab1),
+        setPeca(Index,Num1,Stone,Tab1,NewTab),
+        rmCell(Stone,Index,I2),
+        storeCell(Symbol,Index,I2),
+        storeCell(Stone,Index,Num1)
+        ).
 
 
 slideStoneFromUp(PlayerTurn,I2,Index,Stone,Tab,NewTab) :-
@@ -89,7 +97,10 @@ slideStoneFromUp(PlayerTurn,I2,Index,Stone,Tab,NewTab) :-
     (
         NextElem \= emptySpace -> setPeca(Num2,Index,Symbol,Tab,NewTab);
         setPeca(I2,Index,Symbol,Tab,Tab1),
-        setPeca(Num1,Index,Stone,Tab1,NewTab)
+        setPeca(Num1,Index,Stone,Tab1,NewTab),
+        rmCell(Stone,I2,Index),
+        storeCell(Symbol,I2,Index),
+        storeCell(Stone,Num1,Index)
         ).
 
 slideStoneFromDown(PlayerTurn,I2,Index,Stone,Tab,NewTab) :-
@@ -98,9 +109,12 @@ slideStoneFromDown(PlayerTurn,I2,Index,Stone,Tab,NewTab) :-
     getPeca(Num1,Index,Tab,NextElem),
     getPlayerSymbol(PlayerTurn,Symbol),
     (
-        NextElem \= emptySpace -> setPeca(Num2,Index,Symbol,Tab,NewTab);
+        NextElem \= emptySpace -> setPeca(Num2,Index,Symbol,Tab,NewTab),storeCell(Symbol,Num2,Index);
         setPeca(I2,Index,Symbol,Tab,Tab1),
-        setPeca(Num1,Index,Stone,Tab1,NewTab)
+        setPeca(Num1,Index,Stone,Tab1,NewTab),
+        rmCell(Stone,I2,Index),
+        storeCell(Symbol,I2,Index),
+        storeCell(Stone,Num1,Index)
     ).
 
 
@@ -109,3 +123,12 @@ getPlayerSymbol(player2,blackStone).
 
 changeTurn(player1,player2).
 changeTurn(player2,player1).
+
+otherSymbol(whiteStone,blackStone).
+otherSymbol(blackStone,whiteStone).
+
+storeCell(whiteStone,Nlinha,Ncol) :- assert(whiteCell(Nlinha,Ncol)).
+storeCell(blackStone,Nlinha,Ncol) :- assert(blackCell(Nlinha,Ncol)).
+
+rmCell(whiteStone,Nlinha,Ncol) :- retract(whiteCell(Nlinha,Ncol)).
+rmCell(blackStone,Nlinha,Ncol) :- retract(blackCell(Nlinha,Ncol)).

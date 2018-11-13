@@ -1,6 +1,9 @@
 display_game(Board):-
 	length(Board,L),
-	print_tab(Board,L).
+	print_tab(Board,L),
+	write('Black Stones: '),
+	printBlackList,
+	nl.
 
 initialBoard([
 	[emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace],
@@ -71,10 +74,10 @@ finalBoard([
 
 
 print_tab(Tab, Size):-
-	write('\t A B C D E F G H I J K L M N O P Q R S'),
+	write('\t  A   B   C   D   E   F   G   H   I   J   K   L   M   N   O   P   Q   R   S'),
 	nl,nl,
 	print_grid(Tab,Size,Size),
-	write('\t A B C D E F G H I J K L M N O P Q R S'),
+	write('\t  A   B   C   D   E   F   G   H   I   J   K   L   M   N   O   P   Q   R   S'),
 	nl,nl.
 
 print_grid([],_,_).
@@ -84,7 +87,7 @@ print_grid([L|T], Size,Num):-
 	write(Num),
 	write('\t'),
 	Num1 is Num - 1,
-	print_line(L), write('-'), 
+	print_line(L),put_code(9549), 
 	write('\t\t'),
 	write(Num),
 	nl,
@@ -92,19 +95,24 @@ print_grid([L|T], Size,Num):-
 
 print_line([]).
 print_line([C|L]):- 
-	write('-'),
+	put_code(9549),
 	print_cell(C),
 	print_line(L).
 
-print_cell(whiteStone):- write('o').
-print_cell(emptySpace):- write(' ').
-print_cell(blackStone):- write('x').
+print_cell(whiteStone):- put_code(9549),put_code(9898).
+print_cell(emptySpace):- put_code(9549), put_code(9547),put_code(9549).
+print_cell(blackStone):- put_code(9549),put_code(9899).
 print_cell(_):- write('?').
 
 print_barras(0).
 
 print_barras(Size):-
 Size > 0, 
-write(' |'),
+write('  '),
+put_code(9551),
+write(' '),
 Size1 is Size - 1,
 print_barras(Size1). 
+
+printBlackList :- 
+	(blackCell(X,Y) -> write(X),write(', '),write(Y), write(' ,')).

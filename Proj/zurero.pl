@@ -15,15 +15,16 @@ zurero :-
 
 startGame :-
     initialBoard(Tab),
+    storeCell(blackStone,10,10),
     gameLoop(player1,Tab).
 
 gameLoop(PlayerTurn,Tab) :-
     display_game(Tab),
-    play(PlayerTurn,PlayerType,Direction,Tab,NewTab),
+    playHuman(PlayerTurn,Direction,Tab,NewTab),
     terminate(Direction,PlayerTurn,NewTab).
 
 
-play(PlayerTurn,human,Direction,Tab,NewTab) :-
+playHuman(PlayerTurn,Direction,Tab,NewTab) :-
     
     repeat,
         playerMessage(PlayerTurn),nl,
@@ -36,7 +37,8 @@ play(PlayerTurn,human,Direction,Tab,NewTab) :-
         interpret(Direction,Aux,Num),!,
         update(PlayerTurn,Direction,Num,Tab,NewTab)).
 
-play(PlayerTurn,bot,Direction,Tab,NewTab).
+playBot(PlayerTurn,Level,Direction,Tab,NewTab):-
+    choose_move(Tab,Level,Move).
 
 
 
@@ -102,4 +104,7 @@ charToIndex([Char|_],Index) :-
         ).
 
 terminate('q',Player,_) :- true.
-terminate(_,Player,Tab) :- changeTurn(Player,NextPlayer),gameLoop(NextPlayer,Tab).
+terminate(_,Player,Tab) :- game_over(Tab,Winner),changeTurn(Player,NextPlayer),gameLoop(NextPlayer,Tab).
+
+
+game_over(Tab,Winner).
