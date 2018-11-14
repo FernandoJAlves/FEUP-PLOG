@@ -132,3 +132,20 @@ storeCell(blackStone,Nlinha,Ncol) :- assert(blackCell(Nlinha,Ncol)).
 
 rmCell(whiteStone,Nlinha,Ncol) :- retract(whiteCell(Nlinha,Ncol)).
 rmCell(blackStone,Nlinha,Ncol) :- retract(blackCell(Nlinha,Ncol)).
+
+
+getMinList(List, Out) :-
+    List = [H|Rest],
+    getMinList(Rest, H, Out).
+getMinList([], Min, Out) :- Out = Min.
+getMinList([H|Rest], Min, Out) :-
+    Min1 is min(H, Min),
+    getMinList(Rest, Min1, Out).
+
+getMaxList(List, Out) :-
+    List = [H|Rest],
+    getMaxList(Rest, H, Out).
+getMaxList([], Max, Out) :- Out = Max.
+getMaxList([H|Rest], Max, Out) :-
+    Max1 is max(H, Max),
+    getMaxList(Rest, Max1, Out).

@@ -6,6 +6,7 @@
 :- include('gameLogic.pl').
 :- use_module(library(lists)).
 :- use_module(library(between)).
+:- use_module(library(random)).
 
 player(player1).
 player(player2).
@@ -38,10 +39,58 @@ playHuman(PlayerTurn,Direction,Tab,NewTab) :-
         interpret(Direction,Aux,Num),!,
         update(PlayerTurn,Direction,Num,Tab,NewTab)).
 
-playBot(PlayerTurn,Level,Direction,Tab,NewTab):-
-    choose_move(Tab,Level,Move).
+playBot(PlayerTurn,1,Direction,Tab,NewTab):-
+    possibleMoves(Tab,Moves),
+    choose_move(Moves,1,Move).
+    %%execute
 
 
+choose_move(Moves, 1, Move) :-
+    random(0,3,Aux),
+    choose_move_dir(Moves, Aux, Out),
+    Move = Out.
+
+    
+%%move cima    
+choose_move_dir(Moves, 0, Move) :- 
+    range_hor(Moves, Xval),
+    format("~w ~w", [Xval, Yval]).
+
+
+getXcoords([], Xvalues, FinalList) :- FinalList = Xvalues.
+getXcoords([H|Rest], Xvalues, FinalList) :-
+    H = [X|Aux],
+    Aux = [Y|_],
+    append(Xvalues, [X], NewList),
+    getXcoords(Rest, NewList, FinalList).
+
+getYcoords([], Yvalues, FinalList) :- FinalList = Yvalues.
+getYcoords([H|Rest], Yvalues, FinalList) :-
+    H = [X|Aux],
+    Aux = [Y|_],
+    append(Yvalues, [Y], NewList),
+    getYcoords(Rest, NewList, FinalList).
+
+
+
+range_hor(Pieces, Out) :- 
+    getXcoords(Pieces, Aux, OutList),
+    getMinList(OutList, Min),
+    getMaxList(OutList, Max),
+    random(Min, Max, Out).
+    
+range_vert(Pieces, Out) :- 
+    getYcoords(Pieces, Aux, OutList),
+    getMinList(OutList, Min),
+    getMaxList(OutList, Max),
+    random(Min, Max, Out).
+
+
+possibleMoves(Tab,Moves) :-
+    b_pieces(Lb),
+    w_pieces(Lw),
+    append(Lb,Lw,Moves).
+    
 
 interpret('l',List,Num) :- interpretAux(List,Num).
 interpret('r',List,Num) :- interpretAux(List,Num).
@@ -103,6 +152,8 @@ charToIndex([Char|_],Index) :-
         Char == 'S' -> Index is 19;
         write('Invalid Input: you can only choose a letter between A and S.'),nl,fail
         ).
+
+
 
 terminate('q',Player,_) :- true.
 terminate(_,Player,Tab) :- game_over(Tab,Winner), continueGame(Winner, Player, Tab).
