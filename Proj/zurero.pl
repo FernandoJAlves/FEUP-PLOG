@@ -5,6 +5,7 @@
 :- include('menus.pl').
 :- include('gameLogic.pl').
 :- use_module(library(lists)).
+:- use_module(library(between)).
 
 player(player1).
 player(player2).
@@ -106,5 +107,40 @@ charToIndex([Char|_],Index) :-
 terminate('q',Player,_) :- true.
 terminate(_,Player,Tab) :- game_over(Tab,Winner),changeTurn(Player,NextPlayer),gameLoop(NextPlayer,Tab).
 
+validate_hor_b(blackCell(X,Y)) :-
+Xmax is X+4,
+between(X,Xmax,N),
+nl, write('Hor'), nl,
+format('~w ~w', [N,Y]), nl, fail; true.
+
+validate_vert_b(blackCell(X,Y)) :-
+Ymax is Y+4,
+between(Y,Ymax,N),
+nl, write('Vert'), nl,
+format('~w ~w', [X,N]), nl, fail;true.
+
+validate_dia1_b(blackCell(X,Y)) :-
+between(0,4,N),
+Xnew is X + N,
+Ynew is Y + N,
+nl, write('Dia1'), nl,
+format('~w ~w', [Xnew,Ynew]), nl, fail;true.
+
+validate_dia2_b(blackCell(X,Y)) :-
+between(0,4,N),
+Xnew is X + N,
+Ynew is Y - N,
+nl, write('Dia2'), nl,
+format('~w ~w', [Xnew,Ynew]), nl, fail;true.
+
+validate_b(blackCell(X,Y)) :-
+(validate_hor_b(blackCell(X,Y)), fail), !,
+(validate_vert_b(blackCell(X,Y)), fail), !,
+(validate_dia1_b(blackCell(X,Y)), fail), !,
+(validate_dia2_b(blackCell(X,Y)), fail).
+
 
 game_over(Tab,Winner).
+
+
+
