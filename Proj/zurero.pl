@@ -204,7 +204,9 @@ continueGame(none, Player, Tab) :-
     changeTurn(Player,NextPlayer),gameLoop(NextPlayer,Tab).
 
 continueGame(player1, Player, Tab) :-
-    format("Congratulations Player 1, you win!", []), nl.
+    format("Congratulations Player 1, you win!", []), nl,
+    pressEnterToContinue.
 
 continueGame(player2, Player, Tab) :-
-    format("Congratulations Player 2, you win!", []), nl.
+    format("Congratulations Player 2, you win!", []), nl,
+    pressEnterToContinue.

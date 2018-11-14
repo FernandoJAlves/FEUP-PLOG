@@ -1,4 +1,6 @@
 mainMenu :-
+    retractall(blackCell(X,Y)),
+    retractall(whiteCell(X,Y)),
     repeat,
     clearConsole,
 	write('================================='), nl,
