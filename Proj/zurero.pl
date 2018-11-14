@@ -41,6 +41,7 @@ playHuman(PlayerTurn,Direction,Tab,NewTab) :-
         update(PlayerTurn,Direction,Num,Tab,NewTab)).
 
 playBot(PlayerTurn,1,Direction,Tab,NewTab):-
+    Direction == 'q' -> true, !;
     possibleMoves(Tab,Pieces),
     choose_move(Pieces,1, MoveDir, MoveIndex),
     format("Simulated Move: ~w~w", [MoveDir, MoveIndex]), nl.
@@ -110,7 +111,8 @@ range_vert(Pieces, Out) :-
 possibleMoves(Tab,Moves) :-
     b_pieces(Lb),
     w_pieces(Lw),
-    append(Lb,Lw,Moves).
+    append(Lb,Lw,Moves),
+    format("Cells: ~w" , [Moves]), nl.
     
 
 interpret('l',List,Num) :- interpretAux(List,Num).
