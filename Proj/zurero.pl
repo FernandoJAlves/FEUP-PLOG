@@ -23,6 +23,7 @@ startGame :-
 gameLoop(PlayerTurn,Tab) :-
     display_game(Tab),
     playHuman(PlayerTurn,Direction,Tab,NewTab),
+    playBot(PlayerTurn,1,Direction,Tab,NewTab),
     terminate(Direction,PlayerTurn,NewTab).
 
 
@@ -40,21 +41,41 @@ playHuman(PlayerTurn,Direction,Tab,NewTab) :-
         update(PlayerTurn,Direction,Num,Tab,NewTab)).
 
 playBot(PlayerTurn,1,Direction,Tab,NewTab):-
-    possibleMoves(Tab,Moves),
-    choose_move(Moves,1,Move).
+    possibleMoves(Tab,Pieces),
+    choose_move(Pieces,1, MoveDir, MoveIndex),
+    format("Simulated Move: ~w~w", [MoveDir, MoveIndex]), nl.
     %%execute
 
 
-choose_move(Moves, 1, Move) :-
+choose_move(Pieces, 1, MoveDir, MoveIndex) :-
     random(0,3,Aux),
-    choose_move_dir(Moves, Aux, Out),
-    Move = Out.
+    choose_move_dir(Pieces, Aux, Out1, Out2),
+    MoveDir = Out1,
+    MoveIndex = Out2.
 
     
 %%move cima    
-choose_move_dir(Moves, 0, Move) :- 
+choose_move_dir(Moves, 0, Out1, Out2) :- 
     range_hor(Moves, Xval),
-    format("~w ~w", [Xval, Yval]).
+    Out1 = 'u',
+    Out2 = Xval.
+%%move baixo   
+choose_move_dir(Moves, 1, Out1, Out2) :- 
+    range_hor(Moves, Xval),
+    Out1 = 'd',
+    Out2 = Xval.
+%%move esquerda    
+choose_move_dir(Moves, 2, Out1, Out2) :- 
+    range_vert(Moves, Yval),
+    Out1 = 'l',
+    Out2 = Yval.
+%%move direita    
+choose_move_dir(Moves, 3, Out1, Out2) :- 
+    range_vert(Moves, Yval),
+    Out1 = 'r',
+    Out2 = Yval.    
+
+
 
 
 getXcoords([], Xvalues, FinalList) :- FinalList = Xvalues.
