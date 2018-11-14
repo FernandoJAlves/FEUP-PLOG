@@ -118,7 +118,11 @@ Size1 is Size - 1,
 print_barras(Size1). 
 
 printBlackList :- 
-	(blackCell(X,Y),write('('),write(X),write(', '),write(Y), write(')'),write(','),fail;true).
+	%%(blackCell(X,Y),write('('),write(X),write(', '),write(Y), write(')'),write(','),fail;true).
+	b_pieces(L),
+	write(L), nl.
 
 printWhiteList :- 
-	(whiteCell(X,Y),write('('),write(X),write(', '),write(Y), write(')'),write(','),fail;true).
+	%%(whiteCell(X,Y),write('('),write(X),write(', '),write(Y), write(')'),write(','),fail;true).
+	w_pieces(L),
+	write(L), nl.

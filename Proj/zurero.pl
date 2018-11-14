@@ -105,42 +105,106 @@ charToIndex([Char|_],Index) :-
         ).
 
 terminate('q',Player,_) :- true.
-terminate(_,Player,Tab) :- game_over(Tab,Winner),changeTurn(Player,NextPlayer),gameLoop(NextPlayer,Tab).
+terminate(_,Player,Tab) :- game_over(Tab,Winner), continueGame(Winner, Player, Tab).
 
-validate_hor_b(blackCell(X,Y)) :-
+validate_hor_b(X,Y) :-
 Xmax is X+4,
 between(X,Xmax,N),
-nl, write('Hor'), nl,
-format('~w ~w', [N,Y]), nl, fail; true.
+b_pieces(L),
+\+member([N,Y], L), !, fail; true.
 
-validate_vert_b(blackCell(X,Y)) :-
+validate_vert_b(X,Y) :-
 Ymax is Y+4,
 between(Y,Ymax,N),
-nl, write('Vert'), nl,
-format('~w ~w', [X,N]), nl, fail;true.
+b_pieces(L),
+\+member([X,N], L), !, fail; true.
 
-validate_dia1_b(blackCell(X,Y)) :-
+validate_dia1_b(X,Y) :-
 between(0,4,N),
 Xnew is X + N,
 Ynew is Y + N,
-nl, write('Dia1'), nl,
-format('~w ~w', [Xnew,Ynew]), nl, fail;true.
+b_pieces(L),
+\+member([Xnew,Ynew], L), !, fail; true.
 
-validate_dia2_b(blackCell(X,Y)) :-
+validate_dia2_b(X,Y) :-
 between(0,4,N),
 Xnew is X + N,
 Ynew is Y - N,
-nl, write('Dia2'), nl,
-format('~w ~w', [Xnew,Ynew]), nl, fail;true.
-
-validate_b(blackCell(X,Y)) :-
-(validate_hor_b(blackCell(X,Y)), fail), !,
-(validate_vert_b(blackCell(X,Y)), fail), !,
-(validate_dia1_b(blackCell(X,Y)), fail), !,
-(validate_dia2_b(blackCell(X,Y)), fail).
+b_pieces(L),
+\+member([Xnew,Ynew], L), !, fail; true.
 
 
-game_over(Tab,Winner).
+validate_hor_w(X,Y) :-
+Xmax is X+4,
+between(X,Xmax,N),
+w_pieces(L),
+\+member([N,Y], L), !, fail; true.
+
+validate_vert_w(X,Y) :-
+Ymax is Y+4,
+between(Y,Ymax,N),
+w_pieces(L),
+\+member([X,N], L), !, fail; true.
+
+validate_dia1_w(X,Y) :-
+between(0,4,N),
+Xnew is X + N,
+Ynew is Y + N,
+w_pieces(L),
+\+member([Xnew,Ynew], L), !, fail; true.
+
+validate_dia2_w(X,Y) :-
+between(0,4,N),
+Xnew is X + N,
+Ynew is Y - N,
+w_pieces(L),
+\+member([Xnew,Ynew], L), !, fail; true.
 
 
 
+validate_b(X,Y) :-
+validate_hor_b(X,Y), !;
+validate_vert_b(X,Y), !;
+validate_dia1_b(X,Y), !;
+validate_dia2_b(X,Y).
+
+validate_w(X,Y) :- 
+validate_hor_w(X,Y), !;
+validate_vert_w(X,Y), !;
+validate_dia1_w(X,Y), !;
+validate_dia2_w(X,Y).
+
+game_over(Tab,Winner) :-
+
+b_pieces(Lb),
+w_pieces(Lw),
+
+%%write(Lb), nl,
+
+(checkBlack(Lb) -> Winner = player1; 
+checkWhite(Lw) -> Winner = player2;
+Winner = none),
+write(Winner), nl.
+
+
+
+checkBlack([H|Rest]) :-
+    H = [X|Aux],
+    Aux = [Y|_],
+    validate_b(X,Y), !;
+    checkBlack(Rest).
+
+checkWhite([H|Rest]) :-
+    H = [X|Aux],
+    Aux = [Y|_],
+    validate_w(X,Y), !;
+    checkWhite(Rest).
+
+continueGame(none, Player, Tab) :-
+    changeTurn(Player,NextPlayer),gameLoop(NextPlayer,Tab).
+
+continueGame(player1, Player, Tab) :-
+    format("Congratulations Player 1, you win!", []), nl.
+
+continueGame(player2, Player, Tab) :-
+    format("Congratulations Player 2, you win!", []), nl.
