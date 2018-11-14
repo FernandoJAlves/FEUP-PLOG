@@ -22,5 +22,5 @@ mainMenu :-
             nl,
             write('Error: invalid input.'), nl,
             pressEnterToContinue, nl,
-            MainMenu
+            mainMenu
         ).
