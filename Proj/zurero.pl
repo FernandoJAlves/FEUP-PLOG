@@ -28,14 +28,19 @@ gameLoop(pvp,PlayerTurn,Tab) :-
     terminate(pvp,Direction,PlayerTurn,NewTab).
 
 gameLoop(pvb,player1,Tab) :-
+    %%format("Player 1", []), nl,
     display_game(Tab),
     playHuman(player1,Direction,Tab,NewTab),
     terminate(pvb,Direction,player1,NewTab).
 
 gameLoop(pvb,player2,Tab) :-
+    %%format("Player 2", []), nl,
     display_game(Tab),
     playBot(player2,1,Direction,Tab,NewTab),
+    %%format("Before terminate 2, ~w", [Direction]), nl,
+    Direction = 'p', %%Valor aleatorio para ficar instanciado,
     terminate(pvb,Direction,player2,NewTab).
+    %%format("After terminate 2, ~w", [Direction]), nl.
 
 
 gameLoop(bvb,PlayerTurn,Tab) :-
@@ -62,15 +67,16 @@ playBot(PlayerTurn,1,Direction,Tab,NewTab):-
     possibleMoves(Tab,Pieces),
     choose_move(Pieces,1, MoveDir, MoveIndex),
     format("Simulated Move: ~w~w", [MoveDir, MoveIndex]), nl,
-    update(PlayerTurn,MoveDir,MoveIndex,Tab,NewTab),
-    format("After update", []), nl.
+    update(PlayerTurn,MoveDir,MoveIndex,Tab,NewTab).
+    %%format("After update", []), nl.
+    %%display_game(NewTab).
 
 
 
 choose_move(Pieces, 1, MoveDir, MoveIndex) :-
     random(0,3,Aux),
-    nl, nl, format("Dir: ~w    Pieces: ~w", [Aux, Pieces]), nl,
-    choose_move_dir(Pieces, 2, Out1, Out2),
+    %%nl, nl, format("Dir: ~w    Pieces: ~w", [Aux, Pieces]), nl,
+    choose_move_dir(Pieces, Aux, Out1, Out2),
     MoveDir = Out1,
     MoveIndex = Out2.
 
@@ -89,12 +95,12 @@ choose_move_dir(Moves, 1, Out1, Out2) :-
 choose_move_dir(Moves, 2, Out1, Out2) :- 
     range_vert(Moves, Yval),
     Out1 = 'l',
-    Out2 = Yval.
+    Out2 is 20 - Yval.
 %%move direita    
 choose_move_dir(Moves, 3, Out1, Out2) :- 
     range_vert(Moves, Yval),
     Out1 = 'r',
-    Out2 = Yval.    
+    Out2 is 20 - Yval.    
 
 
 
@@ -117,24 +123,24 @@ getYcoords([H|Rest], Yvalues, FinalList) :-
 
 range_hor(Pieces, Out) :- 
     getYcoords(Pieces, Aux, OutList),
-    format("OutList Hor1: ~w", [OutList]), nl,
+    %%format("OutList Hor1: ~w", [OutList]), nl,
     getMinList(OutList, Min),
-    format("OutList Hor1: ~w", [OutList]), nl,
+    %%format("OutList Hor1: ~w", [OutList]), nl,
     getMaxList(OutList, Max),
     NewMax is Max + 1,
     random(Min, NewMax, Out).
     
 range_vert(Pieces, Out) :- 
     getXcoords(Pieces, Aux, OutList),
-    format("OutList Vert1: ~w", [OutList]), nl,
+    %%format("OutList Vert1: ~w", [OutList]), nl,
     getMinList(OutList, Min),
-    format("OutList Vert2: ~w", [OutList]), nl,
+    %%format("OutList Vert2: ~w", [OutList]), nl,
     getMaxList(OutList, Max),
-    format("Min: ~w   Max: ~w", [Min, Max]), nl,
+    %%format("Min: ~w   Max: ~w", [Min, Max]), nl,
     NewMax is Max + 1,
-    format("Min: ~w   NewMax: ~w", [Min, NewMax]), nl,
-    random(Min, NewMax, Out),
-    format("Saiu com Out: ~w", [Out]), nl.
+    %%format("Min: ~w   NewMax: ~w", [Min, NewMax]), nl,
+    random(Min, NewMax, Out).
+    %%format("Saiu com Out: ~w", [Out]), nl.
 
 
 
@@ -285,8 +291,8 @@ w_pieces(Lw),
 
 %%write(Lb), nl,
 
-(checkBlack(Lb) -> Winner = player1; 
-checkWhite(Lw) -> Winner = player2;
+(checkBlack(Lb) -> Winner = player2; 
+checkWhite(Lw) -> Winner = player1;
 Winner = none).
 %%write(Winner), nl.
 
@@ -305,7 +311,10 @@ checkWhite([H|Rest]) :-
     checkWhite(Rest).
 
 continueGame(none, GameMode,Player, Tab) :-
-    changeTurn(Player,NextPlayer),gameLoop(GameMode,NextPlayer,Tab).
+    %%format("In continueGame", []), nl,
+    changeTurn(Player,NextPlayer),
+    %%format("Player: ~w    Gamemode: ~w", [NextPlayer, GameMode]), nl,
+    gameLoop(GameMode,NextPlayer,Tab).
 
 continueGame(player1, GameMode,Player, Tab) :-
     format("Congratulations Player 1, you win!", []), nl,

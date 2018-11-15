@@ -139,7 +139,7 @@ getMinList(List, Out) :-
     getMinList(Rest, H, Out).
 getMinList([], Min, Out) :- Out = Min.
 getMinList([H|Rest], Min, Out) :-
-    format("H: ~w   Min: ~w", [H,Min]), nl,
+    %%format("H: ~w   Min: ~w", [H,Min]), nl,
     Min1 is min(H, Min),
     getMinList(Rest, Min1, Out).
 
@@ -148,6 +148,6 @@ getMaxList(List, Out) :-
     getMaxList(Rest, H, Out).
 getMaxList([], Max, Out) :- Out = Max.
 getMaxList([H|Rest], Max, Out) :-
-    format("H: ~w   Max: ~w", [H,Max]), nl,
+    %%format("H: ~w   Max: ~w", [H,Max]), nl,
     Max1 is max(H, Max),
     getMaxList(Rest, Max1, Out).
