@@ -15,16 +15,33 @@ zurero :-
     mainMenu.
 
 
-startGame :-
+startGame(GameMode) :-
     initialBoard(Tab),
+    retractall(blackCell(X,Y)),
+    retractall(whiteCell(X,Y)),
     storeCell(blackStone,10,10),
-    gameLoop(player1,Tab).
+    gameLoop(GameMode,player1,Tab).
 
-gameLoop(PlayerTurn,Tab) :-
+gameLoop(pvp,PlayerTurn,Tab) :-
     display_game(Tab),
     playHuman(PlayerTurn,Direction,Tab,NewTab),
-    playBot(PlayerTurn,1,Direction,Tab,NewTab),
-    terminate(Direction,PlayerTurn,NewTab).
+    terminate(pvp,Direction,PlayerTurn,NewTab).
+
+gameLoop(pvb,player1,Tab) :-
+    display_game(Tab),
+    playHuman(player1,Direction,Tab,NewTab),
+    terminate(pvb,Direction,PlayerTurn,NewTab).
+
+gameLoop(pvb,player2,Tab) :-
+    display_game(Tab),
+    playBot(player2,1,Direction,Tab,NewTab),
+    terminate(pvb,Direction,PlayerTurn,NewTab).
+
+
+gameLoop(bvb,PlayerTurn,Tab) :-
+    display_game(Tab),
+    playBot(player2,1,Direction,Tab,NewTab),
+    terminate(bvb,Direction,PlayerTurn,NewTab).
 
 
 playHuman(PlayerTurn,Direction,Tab,NewTab) :-
@@ -176,8 +193,8 @@ charToIndex([Char|_],Index) :-
 
 
 
-terminate('q',Player,_) :- true.
-terminate(_,Player,Tab) :- game_over(Tab,Winner), continueGame(Winner, Player, Tab).
+terminate(GameMode,'q',Player,_) :- true.
+terminate(GameMode,_,Player,Tab) :- game_over(Tab,Winner), continueGame(Winner, GameMode,Player, Tab).
 
 validate_hor_b(X,Y) :-
 Xmax is X+4,
@@ -272,13 +289,13 @@ checkWhite([H|Rest]) :-
     validate_w(X,Y), !;
     checkWhite(Rest).
 
-continueGame(none, Player, Tab) :-
-    changeTurn(Player,NextPlayer),gameLoop(NextPlayer,Tab).
+continueGame(none, GameMode,Player, Tab) :-
+    changeTurn(Player,NextPlayer),gameLoop(GameMode,NextPlayer,Tab).
 
-continueGame(player1, Player, Tab) :-
+continueGame(player1, GameMode,Player, Tab) :-
     format("Congratulations Player 1, you win!", []), nl,
     pressEnterToContinue.
 
-continueGame(player2, Player, Tab) :-
+continueGame(player2, GameMode,Player, Tab) :-
     format("Congratulations Player 2, you win!", []), nl,
     pressEnterToContinue.

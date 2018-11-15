@@ -1,6 +1,4 @@
 mainMenu :-
-    retractall(blackCell(X,Y)),
-    retractall(whiteCell(X,Y)),
     repeat,
     clearConsole,
 	write('================================='), nl,
@@ -16,7 +14,7 @@ mainMenu :-
 	write('Choose an option:'), nl,
     readChar(Input),
         (
-            Input = '1' -> startGame, mainMenu;
+            Input = '1' -> gameModeMenu, mainMenu;
             Input = '2' -> mainMenu;
             Input = '3' -> mainMenu;
             Input = '4';
@@ -26,3 +24,31 @@ mainMenu :-
             pressEnterToContinue, nl,
             mainMenu
         ).
+
+
+gameModeMenu :-
+        repeat,
+        clearConsole,
+        write('================================='), nl,
+        write('=        ..:: ZURERO ::..       ='), nl,
+        write('================================='), nl,
+        write('=                               ='), nl,
+        write('=   1. Human vs Human           ='), nl,
+        write('=   2. Human vs Computer        ='), nl,
+        write('=   3. Computer vs Computer     ='), nl,
+        write('=   4. Return to Main Menu      ='), nl,
+        write('=                               ='), nl,
+        write('================================='), nl,
+        write('Choose an option:'), nl,
+        readChar(Input),
+            (
+                Input = '1' -> startGame(pvp), mainMenu;
+                Input = '2' -> startGame(pvb), mainMenu;
+                Input = '3' -> startGame(bvb), mainMenu;
+                Input = '4';
+        
+                nl,
+                write('Error: invalid input.'), nl,
+                pressEnterToContinue, nl,
+                mainMenu
+            ).
