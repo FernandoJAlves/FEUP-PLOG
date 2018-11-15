@@ -45,7 +45,8 @@ gameLoop(pvb,player2,Tab) :-
 
 gameLoop(bvb,PlayerTurn,Tab) :-
     display_game(Tab),
-    playBot(player2,1,Direction,Tab,NewTab),
+    playBot(PlayerTurn,1,Direction,Tab,NewTab),
+    Direction = 'p', %%Valor aleatorio para ficar instanciado,
     terminate(bvb,Direction,PlayerTurn,NewTab).
 
 
@@ -317,9 +318,11 @@ continueGame(none, GameMode,Player, Tab) :-
     gameLoop(GameMode,NextPlayer,Tab).
 
 continueGame(player1, GameMode,Player, Tab) :-
+    display_game(Tab),
     format("Congratulations Player 1, you win!", []), nl,
     pressEnterToContinue.
 
 continueGame(player2, GameMode,Player, Tab) :-
+    display_game(Tab),
     format("Congratulations Player 2, you win!", []), nl,
     pressEnterToContinue.
