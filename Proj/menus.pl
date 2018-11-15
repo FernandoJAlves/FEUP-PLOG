@@ -42,9 +42,9 @@ gameModeMenu :-
         write('Choose an option:'), nl,
         readChar(Input),
             (
-                Input = '1' -> startGame(pvp), mainMenu;
-                Input = '2' -> startGame(pvb), mainMenu;
-                Input = '3' -> startGame(bvb), mainMenu;
+                Input = '1' -> startGame(pvp);
+                Input = '2' -> startGame(pvb);
+                Input = '3' -> startGame(bvb);
                 Input = '4';
         
                 nl,
