@@ -1,0 +1,14 @@
+CN5
+MP2
+--------
+JP1
+JP3
+JP7
+JP10
+
+
+% If/Else
+
+m(Condiçao,Goal,Else) :- Condiçao, !, Goal.
+m(Condiçao,Goal,Else) :- Else.
+

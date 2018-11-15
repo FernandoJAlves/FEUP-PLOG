@@ -30,12 +30,12 @@ gameLoop(pvp,PlayerTurn,Tab) :-
 gameLoop(pvb,player1,Tab) :-
     display_game(Tab),
     playHuman(player1,Direction,Tab,NewTab),
-    terminate(pvb,Direction,PlayerTurn,NewTab).
+    terminate(pvb,Direction,player1,NewTab).
 
 gameLoop(pvb,player2,Tab) :-
     display_game(Tab),
     playBot(player2,1,Direction,Tab,NewTab),
-    terminate(pvb,Direction,PlayerTurn,NewTab).
+    terminate(pvb,Direction,player2,NewTab).
 
 
 gameLoop(bvb,PlayerTurn,Tab) :-
@@ -61,13 +61,16 @@ playBot(PlayerTurn,1,Direction,Tab,NewTab):-
     Direction == 'q' -> true, !;
     possibleMoves(Tab,Pieces),
     choose_move(Pieces,1, MoveDir, MoveIndex),
-    format("Simulated Move: ~w~w", [MoveDir, MoveIndex]), nl.
-    %%execute
+    format("Simulated Move: ~w~w", [MoveDir, MoveIndex]), nl,
+    update(PlayerTurn,MoveDir,MoveIndex,Tab,NewTab),
+    format("After update", []), nl.
+
 
 
 choose_move(Pieces, 1, MoveDir, MoveIndex) :-
     random(0,3,Aux),
-    choose_move_dir(Pieces, Aux, Out1, Out2),
+    nl, nl, format("Dir: ~w    Pieces: ~w", [Aux, Pieces]), nl,
+    choose_move_dir(Pieces, 2, Out1, Out2),
     MoveDir = Out1,
     MoveIndex = Out2.
 
@@ -113,16 +116,26 @@ getYcoords([H|Rest], Yvalues, FinalList) :-
 
 
 range_hor(Pieces, Out) :- 
-    getXcoords(Pieces, Aux, OutList),
+    getYcoords(Pieces, Aux, OutList),
+    format("OutList Hor1: ~w", [OutList]), nl,
     getMinList(OutList, Min),
+    format("OutList Hor1: ~w", [OutList]), nl,
     getMaxList(OutList, Max),
-    random(Min, Max, Out).
+    NewMax is Max + 1,
+    random(Min, NewMax, Out).
     
 range_vert(Pieces, Out) :- 
-    getYcoords(Pieces, Aux, OutList),
+    getXcoords(Pieces, Aux, OutList),
+    format("OutList Vert1: ~w", [OutList]), nl,
     getMinList(OutList, Min),
+    format("OutList Vert2: ~w", [OutList]), nl,
     getMaxList(OutList, Max),
-    random(Min, Max, Out).
+    format("Min: ~w   Max: ~w", [Min, Max]), nl,
+    NewMax is Max + 1,
+    format("Min: ~w   NewMax: ~w", [Min, NewMax]), nl,
+    random(Min, NewMax, Out),
+    format("Saiu com Out: ~w", [Out]), nl.
+
 
 
 possibleMoves(Tab,Moves) :-
@@ -274,8 +287,8 @@ w_pieces(Lw),
 
 (checkBlack(Lb) -> Winner = player1; 
 checkWhite(Lw) -> Winner = player2;
-Winner = none),
-write(Winner), nl.
+Winner = none).
+%%write(Winner), nl.
 
 
 

@@ -3,6 +3,7 @@ pressEnterToContinue:-
 	get_char(_), !.
 
 clearConsole:-
+	%%write('\33\[2J').
 	clearConsole(40), !.
 
 clearConsole(0).
