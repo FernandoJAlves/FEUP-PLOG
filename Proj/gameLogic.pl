@@ -59,6 +59,25 @@ playDown(PlayerTurn,Index,Tab,NewTab) :-
     ((getPeca(Aux,Index,Temp,Elem),Elem \= emptySpace,!) -> I2 is 20-Aux,slideStoneFromDown(PlayerTurn,I2,Index,Elem,Tab,NewTab)).
 
 
+playLeftSim(PlayerTurn,I,Tab) :-
+    Index is 20-I,
+    nth1(Index,Tab,Linha),
+    ((nth1(I2,Linha,Elem),Elem \= emptySpace,!) -> slideStoneFromLeftSim(PlayerTurn,Index,I2,Linha,Tab,Elem,NewTab)).
+
+playRightSim(PlayerTurn,I,Tab) :-
+    Index is 20-I,
+    nth1(Index,Tab,Linha),
+    reverse(Linha,Temp),
+    ((nth1(Aux,Temp,Elem),Elem \= emptySpace,!) -> I2 is 20-Aux,slideStoneFromRightSim(PlayerTurn,Index,I2,Linha,Tab,Elem,NewTab)).
+
+playUpSim(PlayerTurn,Index,Tab) :-
+    ((getPeca(I2,Index,Tab,Elem),Elem \= emptySpace,!) -> slideStoneFromUpSim(PlayerTurn,I2,Index,Elem,Tab,NewTab)).
+
+playDownSim(PlayerTurn,Index,Tab) :-
+    reverse(Tab,Temp),
+    ((getPeca(Aux,Index,Temp,Elem),Elem \= emptySpace,!) -> I2 is 20-Aux,slideStoneFromDownSim(PlayerTurn,I2,Index,Elem,Tab,NewTab)).
+
+
 
 
 slideStoneFromLeft(PlayerTurn,Index,I2,Linha,Tab,Stone,NewTab) :-
@@ -74,6 +93,21 @@ slideStoneFromLeft(PlayerTurn,Index,I2,Linha,Tab,Stone,NewTab) :-
         rmCell(Stone,Index,I2),
         storeCell(Symbol,Index,I2),
         storeCell(Stone,Index,Num1)
+        ).
+
+    
+slideStoneFromLeftSim(PlayerTurn,Index,I2,Linha,Tab,Stone) :-
+    
+    Num1 is I2+1,
+    Num2 is I2-1,
+    nth1(Num1,Linha,Elem),
+    getPlayerSymbol(PlayerTurn,Symbol),
+    (
+        Elem \= emptySpace -> storeSim(Symbol,Index,Num2);
+
+        rmSim(Stone,Index,I2),
+        storeSim(Symbol,Index,I2),
+        storeSim(Stone,Index,Num1)
         ).
 
 slideStoneFromRight(PlayerTurn,Index,I2,Linha,Tab,Stone,NewTab) :-
@@ -162,7 +196,7 @@ storeSim(blackStone,Nlinha,Ncol) :- assert(bSimCell(Nlinha,Ncol)).
 rmSim(whiteStone,Nlinha,Ncol) :- retract(wSimCell(Nlinha,Ncol)).
 rmSim(blackStone,Nlinha,Ncol) :- retract(bSimCell(Nlinha,Ncol)).
 
-startSim :-
+startSim :- true.
     %%copy_predicate_clauses(blackCell,bSimCell),
     %%copy_predicate_clauses(whiteCell,wSimCell).
 

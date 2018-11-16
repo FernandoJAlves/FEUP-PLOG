@@ -29,21 +29,49 @@ checkCharList([Char|Rest]) :-
 		).
 
 
+setrandomness :-
+	now(Usec),NewSeed is Usec mod 12345,
+	getrand(random(X, Y, Z, _)),
+	setrand(random(NewSeed, X, Y, Z)).
+
+
+uList(X, [], [X])  :- !.
+uList(H, [H|_], _) :- !, fail.
+uList(X, [H|T], [H|Rtn]) :- uList(X, T, Rtn).
+
+
 b_pieces(L) :- find_b([], L), !.
 
 find_b(Acc, Loa) :- blackCell(X,Y), uList([X,Y], Acc, AccNew), find_b(AccNew, Loa).
 find_b(Acc, Acc).
 
-uList(X, [], [X])  :- !.
-uList(H, [H|_], _) :- !, fail.
-uList(X, [H|T], [H|Rtn]) :- uList(X, T, Rtn).
 
 w_pieces(L) :- find_w([], L), !.
 
 find_w(Acc, Loa) :- whiteCell(X,Y), uList([X,Y], Acc, AccNew), find_w(AccNew, Loa).
 find_w(Acc, Acc).
 
-setrandomness :-
-	now(Usec),NewSeed is Usec mod 12345,
-	getrand(random(X, Y, Z, _)),
-	setrand(random(NewSeed, X, Y, Z)).
+
+
+findCopyB :- blackCell(X,Y), storeSim(blackStone,X,Y), fail; true.
+findCopyW :- whiteCell(X,Y), storeSim(whiteStone,X,Y), fail; true.
+
+
+b_piecesSim(L) :- find_bSim([], L), !.
+
+find_bSim(Acc, Loa) :- bSimCell(X,Y), uList([X,Y], Acc, AccNew), find_bSim(AccNew, Loa).
+find_bSim(Acc, Acc).
+
+w_piecesSim(L) :- find_wSim([], L), !.
+
+find_wSim(Acc, Loa) :- wSimCell(X,Y), uList([X,Y], Acc, AccNew), find_wSim(AccNew, Loa).
+find_wSim(Acc, Acc).
+
+
+
+copyDataBase :-
+	findCopyB,
+	findCopyW.
+
+
+

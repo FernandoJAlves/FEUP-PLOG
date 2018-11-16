@@ -92,14 +92,16 @@ choose_move(Tab, 1, MoveDir, MoveIndex) :-
     MoveIndex = Out2.
 
 choose_move(Tab, 2, MoveDir, MoveIndex) :-
-    
-    getYcoords(Pieces, Aux, OutList),
-    getMinList(OutList, Min),
-    getMaxList(OutList, Max),
+    currentPieces(Tab,Pieces),
+    getYcoords(Pieces, Aux, OutList1),
+    getMinList(OutList1, MinY),
+    getMaxList(OutList1, MaxY),
 
-    getXcoords(Pieces, Aux, OutList),
-    getMinList(OutList, Min),
-    getMaxList(OutList, Max),
+    getXcoords(Pieces, Aux, OutList2),
+    getMinList(OutList2, MinX),
+    getMaxList(OutList2, MaxX),
+
+    simAllMoves,
 
     %%fazer cada jogada e avaliar o tabuleiro
 
@@ -107,7 +109,12 @@ choose_move(Tab, 2, MoveDir, MoveIndex) :-
     MoveIndex = Out2.
 
 
-judge_board(Tab, Out) :- fail.
+simAllMoves(MinX, MaxX, MinY, MaxY) :- 
+    
+
+    true. 
+
+value(Board, Player, Value) :- fail.
     
 
 
@@ -217,6 +224,11 @@ update(PlayerTurn,'d',Coord,Tab,NewTab):- playDown(PlayerTurn,Coord,Tab,NewTab).
 update(PlayerTurn,'q',Coord,Tab,NewTab):- true.
 update(PlayerTurn,_,Coord,Tab,NewTab):- write('Invalid Direction. You can only choose u(up), d(down), l(left) or r(right).'),nl,fail.
 
+
+updateSim(PlayerTurn,'l',MoveIndex,Tab) :- playLeftSim(PlayerTurn,Coord,Tab).
+updateSim(PlayerTurn,'r',MoveIndex,Tab) :- playRightSim(PlayerTurn,Coord,Tab).
+updateSim(PlayerTurn,'u',MoveIndex,Tab) :- playUpSim(PlayerTurn,Coord,Tab).
+updateSim(PlayerTurn,'d',MoveIndex,Tab) :- playDownSim(PlayerTurn,Coord,Tab).
 
 
 charToIndex([Char|_],Index) :-
