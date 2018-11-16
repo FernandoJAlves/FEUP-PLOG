@@ -1,5 +1,7 @@
 :- dynamic blackCell/2.
 :- dynamic whiteCell/2.
+:- dynamic bSimCell/2.
+:- dynamic wSimCell/2.
 
 
 getPeca(Nlinha,Ncoluna,Tab,Peca) :-
@@ -151,3 +153,19 @@ getMaxList([H|Rest], Max, Out) :-
     %%format("H: ~w   Max: ~w", [H,Max]), nl,
     Max1 is max(H, Max),
     getMaxList(Rest, Max1, Out).
+
+
+
+storeSim(whiteStone,Nlinha,Ncol) :- assert(wSimCell(Nlinha,Ncol)).
+storeSim(blackStone,Nlinha,Ncol) :- assert(bSimCell(Nlinha,Ncol)).
+
+rmSim(whiteStone,Nlinha,Ncol) :- retract(wSimCell(Nlinha,Ncol)).
+rmSim(blackStone,Nlinha,Ncol) :- retract(bSimCell(Nlinha,Ncol)).
+
+startSim :-
+    %%copy_predicate_clauses(blackCell,bSimCell),
+    %%copy_predicate_clauses(whiteCell,wSimCell).
+
+endSim :-
+    retractall(bSimCell(X,Y)),
+    retractall(wSimCell(X,Y)).
