@@ -107,7 +107,7 @@ choose_move(Tab, 2, MoveDir, MoveIndex) :-
     MoveIndex = Out2.
 
 
-judge_board(Tab, Out) :- 
+judge_board(Tab, Out) :- fail.
     
 
 
