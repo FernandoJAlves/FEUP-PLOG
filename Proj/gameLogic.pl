@@ -62,20 +62,20 @@ playDown(PlayerTurn,Index,Tab,NewTab) :-
 playLeftSim(PlayerTurn,I,Tab) :-
     Index is 20-I,
     nth1(Index,Tab,Linha),
-    ((nth1(I2,Linha,Elem),Elem \= emptySpace,!) -> slideStoneFromLeftSim(PlayerTurn,Index,I2,Linha,Tab,Elem,NewTab)).
+    ((nth1(I2,Linha,Elem),Elem \= emptySpace,!) -> slideStoneFromLeftSim(PlayerTurn,Index,I2,Linha,Tab,Elem)).
 
 playRightSim(PlayerTurn,I,Tab) :-
     Index is 20-I,
     nth1(Index,Tab,Linha),
     reverse(Linha,Temp),
-    ((nth1(Aux,Temp,Elem),Elem \= emptySpace,!) -> I2 is 20-Aux,slideStoneFromRightSim(PlayerTurn,Index,I2,Linha,Tab,Elem,NewTab)).
+    ((nth1(Aux,Temp,Elem),Elem \= emptySpace,!) -> I2 is 20-Aux,slideStoneFromRightSim(PlayerTurn,Index,I2,Linha,Tab,Elem)).
 
 playUpSim(PlayerTurn,Index,Tab) :-
-    ((getPeca(I2,Index,Tab,Elem),Elem \= emptySpace,!) -> slideStoneFromUpSim(PlayerTurn,I2,Index,Elem,Tab,NewTab)).
+    ((getPeca(I2,Index,Tab,Elem),Elem \= emptySpace,!) -> slideStoneFromUpSim(PlayerTurn,I2,Index,Elem,Tab)).
 
 playDownSim(PlayerTurn,Index,Tab) :-
     reverse(Tab,Temp),
-    ((getPeca(Aux,Index,Temp,Elem),Elem \= emptySpace,!) -> I2 is 20-Aux,slideStoneFromDownSim(PlayerTurn,I2,Index,Elem,Tab,NewTab)).
+    ((getPeca(Aux,Index,Temp,Elem),Elem \= emptySpace,!) -> I2 is 20-Aux,slideStoneFromDownSim(PlayerTurn,I2,Index,Elem,Tab)).
 
 
 
