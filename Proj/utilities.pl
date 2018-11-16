@@ -43,4 +43,7 @@ w_pieces(L) :- find_w([], L), !.
 find_w(Acc, Loa) :- whiteCell(X,Y), uList([X,Y], Acc, AccNew), find_w(AccNew, Loa).
 find_w(Acc, Acc).
 
-
+setrandomness :-
+	now(Usec),NewSeed is Usec mod 12345,
+	getrand(random(X, Y, Z, _)),
+	setrand(random(NewSeed, X, Y, Z)).
