@@ -67,8 +67,7 @@ playHuman(PlayerTurn,Direction,Tab,NewTab) :-
 
 playBot(PlayerTurn,1,Direction,Tab,NewTab):-
     Direction == 'q' -> true, !;
-    possibleMoves(Tab,Pieces),
-    choose_move(Pieces,1, MoveDir, MoveIndex),
+    choose_move(Tab,1, MoveDir, MoveIndex),
     format("Simulated Move: ~w~w", [MoveDir, MoveIndex]), nl,
     update(PlayerTurn,MoveDir,MoveIndex,Tab,NewTab).
     %%format("After update", []), nl.
@@ -77,19 +76,40 @@ playBot(PlayerTurn,1,Direction,Tab,NewTab):-
 
 playBot(PlayerTurn,2,Direction,Tab,NewTab):-
     Direction == 'q' -> true, !;
-    possibleMoves(Tab,Pieces),
-    choose_move(Pieces,1, MoveDir, MoveIndex),
+
+    choose_move(Tab,2, MoveDir, MoveIndex),
     format("Simulated Move: ~w~w", [MoveDir, MoveIndex]), nl,
     update(PlayerTurn,MoveDir,MoveIndex,Tab,NewTab).
 
 
 
-choose_move(Pieces, 1, MoveDir, MoveIndex) :-
+choose_move(Tab, 1, MoveDir, MoveIndex) :-
+    currentPieces(Tab,Pieces),
     random(0,4,Aux),
     %%nl, nl, format("Dir: ~w    Pieces: ~w", [Aux, Pieces]), nl,
     choose_move_dir(Pieces, Aux, Out1, Out2),
     MoveDir = Out1,
     MoveIndex = Out2.
+
+choose_move(Tab, 2, MoveDir, MoveIndex) :-
+    
+    getYcoords(Pieces, Aux, OutList),
+    getMinList(OutList, Min),
+    getMaxList(OutList, Max),
+
+    getXcoords(Pieces, Aux, OutList),
+    getMinList(OutList, Min),
+    getMaxList(OutList, Max),
+
+    %%fazer cada jogada e avaliar o tabuleiro
+
+    MoveDir = Out1,
+    MoveIndex = Out2.
+
+
+judge_board(Tab, Out) :- 
+    
+
 
     
 %%move cima    
@@ -155,7 +175,7 @@ range_vert(Pieces, Out) :-
 
 
 
-possibleMoves(Tab,Moves) :-
+currentPieces(Tab,Moves) :-
     b_pieces(Lb),
     w_pieces(Lw),
     append(Lb,Lw,Moves),
