@@ -93,22 +93,8 @@ slideStoneFromLeft(PlayerTurn,Index,I2,Linha,Tab,Stone,NewTab) :-
         rmCell(Stone,Index,I2),
         storeCell(Symbol,Index,I2),
         storeCell(Stone,Index,Num1)
-        ).
+).
 
-    
-slideStoneFromLeftSim(PlayerTurn,Index,I2,Linha,Tab,Stone) :-
-    
-    Num1 is I2+1,
-    Num2 is I2-1,
-    nth1(Num1,Linha,Elem),
-    getPlayerSymbol(PlayerTurn,Symbol),
-    (
-        Elem \= emptySpace -> storeSim(Symbol,Index,Num2);
-
-        rmSim(Stone,Index,I2),
-        storeSim(Symbol,Index,I2),
-        storeSim(Stone,Index,Num1)
-        ).
 
 slideStoneFromRight(PlayerTurn,Index,I2,Linha,Tab,Stone,NewTab) :-
     Num1 is I2-1,
@@ -122,7 +108,7 @@ slideStoneFromRight(PlayerTurn,Index,I2,Linha,Tab,Stone,NewTab) :-
         rmCell(Stone,Index,I2),
         storeCell(Symbol,Index,I2),
         storeCell(Stone,Index,Num1)
-        ).
+).
 
 
 slideStoneFromUp(PlayerTurn,I2,Index,Stone,Tab,NewTab) :-
@@ -137,7 +123,7 @@ slideStoneFromUp(PlayerTurn,I2,Index,Stone,Tab,NewTab) :-
         rmCell(Stone,I2,Index),
         storeCell(Symbol,I2,Index),
         storeCell(Stone,Num1,Index)
-        ).
+).
 
 slideStoneFromDown(PlayerTurn,I2,Index,Stone,Tab,NewTab) :-
     Num1 is I2-1,
@@ -151,7 +137,37 @@ slideStoneFromDown(PlayerTurn,I2,Index,Stone,Tab,NewTab) :-
         rmCell(Stone,I2,Index),
         storeCell(Symbol,I2,Index),
         storeCell(Stone,Num1,Index)
-    ).
+).
+
+
+
+
+slideStoneFromLeftSim(PlayerTurn,Index,I2,Linha,Tab,Stone) :-
+    
+    Num1 is I2+1,
+    Num2 is I2-1,
+    nth1(Num1,Linha,Elem),
+    getPlayerSymbol(PlayerTurn,Symbol),
+    (
+        Elem \= emptySpace -> storeSim(Symbol,Index,Num2);
+
+        rmSim(Stone,Index,I2),
+        storeSim(Symbol,Index,I2),
+        storeSim(Stone,Index,Num1)
+).
+
+slideStoneFromRightSim(PlayerTurn,Index,I2,Linha,Tab,Stone) :-
+    Num1 is I2-1,
+    Num2 is I2+1,
+    nth1(Num1,Linha,Elem),
+    getPlayerSymbol(PlayerTurn,Symbol),
+    (
+        Elem \= emptySpace -> storeSim(Symbol,Index,Num2);
+
+        rmCell(Stone,Index,I2),
+        storeSim(Symbol,Index,I2),
+        storeSim(Stone,Index,Num1)
+).
 
 
 getPlayerSymbol(player1,whiteStone).
