@@ -164,9 +164,33 @@ slideStoneFromRightSim(PlayerTurn,Index,I2,Linha,Tab,Stone) :-
     (
         Elem \= emptySpace -> storeSim(Symbol,Index,Num2);
 
-        rmCell(Stone,Index,I2),
+        rmSim(Stone,Index,I2),
         storeSim(Symbol,Index,I2),
         storeSim(Stone,Index,Num1)
+).
+
+slideStoneFromUpSim(PlayerTurn,I2,Index,Stone,Tab) :-
+    Num1 is I2+1,
+    Num2 is I2-1,
+    getPeca(Num1,Index,Tab,NextElem),
+    getPlayerSymbol(PlayerTurn,Symbol),
+    (
+        NextElem \= emptySpace -> storeSim(Symbol,Num2,Index);
+        rmSim(Stone,I2,Index),
+        storeSim(Symbol,I2,Index),
+        storeSim(Stone,Num1,Index)
+).
+
+slideStoneFromDownSim(PlayerTurn,I2,Index,Stone,Tab) :-
+    Num1 is I2-1,
+    Num2 is I2+1,
+    getPeca(Num1,Index,Tab,NextElem),
+    getPlayerSymbol(PlayerTurn,Symbol),
+    (
+        NextElem \= emptySpace -> storeSim(Symbol,Num2,Index);
+        rmSim(Stone,I2,Index),
+        storeSim(Symbol,I2,Index),
+        storeSim(Stone,Num1,Index)
 ).
 
 
