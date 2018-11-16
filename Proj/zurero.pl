@@ -73,9 +73,17 @@ playBot(PlayerTurn,1,Direction,Tab,NewTab):-
     %%display_game(NewTab).
 
 
+playBot(PlayerTurn,2,Direction,Tab,NewTab):-
+    Direction == 'q' -> true, !;
+    possibleMoves(Tab,Pieces),
+    choose_move(Pieces,1, MoveDir, MoveIndex),
+    format("Simulated Move: ~w~w", [MoveDir, MoveIndex]), nl,
+    update(PlayerTurn,MoveDir,MoveIndex,Tab,NewTab).
+
+
 
 choose_move(Pieces, 1, MoveDir, MoveIndex) :-
-    random(0,3,Aux),
+    random(0,4,Aux),
     %%nl, nl, format("Dir: ~w    Pieces: ~w", [Aux, Pieces]), nl,
     choose_move_dir(Pieces, Aux, Out1, Out2),
     MoveDir = Out1,
