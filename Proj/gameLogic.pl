@@ -162,9 +162,7 @@ storeSim(blackStone,Nlinha,Ncol) :- assert(bSimCell(Nlinha,Ncol)).
 rmSim(whiteStone,Nlinha,Ncol) :- retract(wSimCell(Nlinha,Ncol)).
 rmSim(blackStone,Nlinha,Ncol) :- retract(bSimCell(Nlinha,Ncol)).
 
-startSim :-
-    %%copy_predicate_clauses(blackCell,bSimCell),
-    %%copy_predicate_clauses(whiteCell,wSimCell).
+startSim :- true.
 
 endSim :-
     retractall(bSimCell(X,Y)),

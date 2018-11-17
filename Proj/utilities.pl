@@ -17,8 +17,7 @@ readChar(Input):-
 	get_char(_).
 
 readPlay(Input) :-
-	read(Input),
-	get_code(_).
+	read_line(Input).
 
 
 checkCharList([]).
