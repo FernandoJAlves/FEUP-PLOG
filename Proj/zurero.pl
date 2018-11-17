@@ -39,7 +39,8 @@ gameLoop(pvb,player1,Tab) :-
 gameLoop(pvb,player2,Tab) :-
     %%format("Player 2", []), nl,
     display_game(Tab),
-    playBot(player2,1,Direction,Tab,NewTab),
+    botInt(Level),
+    playBot(player2,Level,Direction,Tab,NewTab),
     %%format("Before terminate 2, ~w", [Direction]), nl,
     Direction = 'p', %%Valor aleatorio para ficar instanciado,
     terminate(pvb,Direction,player2,NewTab).
@@ -48,7 +49,8 @@ gameLoop(pvb,player2,Tab) :-
 
 gameLoop(bvb,PlayerTurn,Tab) :-
     display_game(Tab),
-    playBot(PlayerTurn,1,Direction,Tab,NewTab),
+    botInt(Level),
+    playBot(PlayerTurn,Level,Direction,Tab,NewTab),
     Direction = 'p', %%Valor aleatorio para ficar instanciado,
     terminate(bvb,Direction,PlayerTurn,NewTab).
 
@@ -61,8 +63,6 @@ playHuman(PlayerTurn,Direction,Tab,NewTab) :-
         readPlay(Chars),
         Chars = [DirectionCode|Aux],
         char_code(Direction, DirectionCode),
-        
-        write(Direction),
         (Direction == 'q' -> true;
         interpret(Direction,Aux,Num),!,
         update(PlayerTurn,Direction,Num,Tab,NewTab)).
@@ -171,7 +171,7 @@ interpretAux(X,Num):-
     ),
     
     checkCharList(X),
-    number_chars(N,X),
+    number_codes(N,X),
     Num is N,
     (
         N > 19 -> write('Invalid Input: You have to select one position between 1 and 19'),nl,fail;
@@ -191,7 +191,8 @@ update(PlayerTurn,_,Coord,Tab,NewTab):- write('Invalid Direction. You can only c
 
 
 
-charToIndex([Char|_],Index) :-
+charToIndex([Code|_],Index) :-
+    char_code(Char,Code),
     (
         Char == 'A' -> Index is 1;
         Char == 'B' -> Index is 2;

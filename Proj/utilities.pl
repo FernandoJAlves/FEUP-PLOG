@@ -21,10 +21,11 @@ readPlay(Input) :-
 
 
 checkCharList([]).
-checkCharList([Char|Rest]) :-
+checkCharList([Code|Rest]) :-
 	(
+		char_code(Char,Code),
 		Char @>= '0', Char @=< '9' -> true,checkCharList(Rest);
-		write('Invalid Input: After the direction you must choose a number between 1 a 19'),fail
+		write('Invalid Input: After the direction you must choose a number between 1 a 19'),nl,fail
 		).
 
 
