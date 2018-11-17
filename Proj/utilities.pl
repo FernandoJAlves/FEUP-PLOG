@@ -96,7 +96,6 @@ setupTestTab(Tab) :-
 	storeCell(blackStone,1,3),
 	storeCell(whiteStone,4,3),
 	storeCell(whiteStone,9,9),
-	storeCell(whiteStone,9,9),
 	Tab = [[blackStone,whiteStone,emptySpace,emptySpace,emptySpace],
 			[blackStone,whiteStone,emptySpace,emptySpace,emptySpace],
 			[blackStone,whiteStone,emptySpace,emptySpace,emptySpace],

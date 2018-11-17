@@ -133,9 +133,11 @@ value(Board, player1, Value) :-
     Value is OutVal2 - OutVal1.
     
 value(Board, player2, Value) :-
-    Value = 10,
-    % Black - white points
-    true.
+    b_piecesSim(Lb),
+    valueBlack(Lb,0,OutVal1),
+    w_piecesSim(Lw),
+    valueWhite(Lw,0,OutVal2),
+    Value is OutVal1 - OutVal2.
 
 
 getBestMoves([], _, Aux, OutList, SizeAux, SizeOut) :- OutList = Aux, SizeOut = SizeAux.
@@ -382,12 +384,12 @@ avaliate_b(X,Y,Aux1,OutVal) :-
 avaliate_w(X,Y,Aux1,OutVal) :-
     b_piecesSim(Lb),
     w_piecesSim(Lw),
-
     avaliate_hor_w(X,Y,Lw,Lb,Aux1,Aux2),
     avaliate_vert_w(X,Y,Lw,Lb,Aux2,Aux3),
     avaliate_dia1_w(X,Y,Lw,Lb,Aux3,Aux4),
     avaliate_dia2_w(X,Y,Lw,Lb,Aux4,Aux5),
-    OutVal is Aux5 + Aux1.
+    OutVal is Aux5.
+
 
 
 countHor(Xmax,Y,L,OldN,NewN,Xmax) :- NewN = OldN.
@@ -402,7 +404,7 @@ countVert(X,Y,L,OldN,NewN,Ymax) :-
     NewY is Y+1,
     countVert(X,NewY,L,Aux,NewN,Ymax).
 
-countDia1(Nmax,Nmax,L,OldN,NewN,Nmax) :- NewN = OldN.
+countDia1(Nmax,_,L,OldN,NewN,Nmax) :- NewN = OldN.
 countDia1(X,Y,L,OldN,NewN,Nmax) :-
     ifElse(member([X,Y], L),Aux is OldN+1,Aux is OldN),
     NewX is X+1,
@@ -424,10 +426,7 @@ avaliate_hor_b(X,Y,Lw,Lb,Aux1,Aux2) :-
     countHor(X,Y,Lw,OldNw,NewNw,Xmax),
     countHor(X,Y,Lb,OldNb,NewNb,Xmax),
     scoreLine(NewNb,NewNw,Aval),
-    nl, format("Black:", []), nl,
-    format("Aux1: ~w    Aval: ~w", [Aux1,Aval]), nl,
-    Aux2 is Aux1 + Aval,
-    format("Aux2: ~w", [Aux2]), nl.
+    Aux2 is Aux1 + Aval.
     
 
 avaliate_hor_w(X,Y,Lw,Lb,Aux1,Aux2) :-
@@ -437,10 +436,7 @@ avaliate_hor_w(X,Y,Lw,Lb,Aux1,Aux2) :-
     countHor(X,Y,Lw,OldNw,NewNw,Xmax),
     countHor(X,Y,Lb,OldNb,NewNb,Xmax),
     scoreLine(NewNw,NewNb,Aval),
-    nl, format("White:", []), nl,
-    format("Aux1: ~w    Aval: ~w", [Aux1,Aval]), nl,
-    Aux2 is Aux1 + Aval,
-    format("Aux2: ~w", [Aux2]), nl.
+    Aux2 is Aux1 + Aval.
 
 avaliate_vert_b(X,Y,Lw,Lb,Aux1,Aux2) :-
     Ymax is Y+5,
@@ -473,6 +469,8 @@ avaliate_dia1_w(X,Y,Lw,Lb,Aux1,Aux2) :-
     Nmax is X+5,
     OldNb is 0,
     OldNw is 0,
+    %%format("AquiDentro1",[]), nl,
+    %%format("X: ~w   Y: ~w   Lw: ~w   OldNw: ~w   Nmax: ~w",[X,Y,Lw,OldNw,Nmax]), nl,
     countDia1(X,Y,Lw,OldNw,NewNw,Nmax),
     countDia1(X,Y,Lb,OldNb,NewNb,Nmax),
     scoreLine(NewNw,NewNb,Aval),
@@ -522,18 +520,18 @@ checkWhite([H|Rest]) :-
     validate_w(X,Y), !;
     checkWhite(Rest).
 
-valueBlack([],OutVal,OutVal).
+valueBlack([],AuxSum,OutVal) :- OutVal = AuxSum.
 valueBlack([H|Rest],AuxSum,OutVal) :-
     H = [X|Aux],
     Aux = [Y|_],
-    avaliate_b(X,Y,AuxSum,Out1), !;
+    avaliate_b(X,Y,AuxSum,Out1),
     valueBlack(Rest,Out1,OutVal).
 
-valueWhite([],OutVal,OutVal).
+valueWhite([],AuxSum,OutVal) :- OutVal = AuxSum.
 valueWhite([H|Rest],AuxSum,OutVal) :-
     H = [X|Aux],
     Aux = [Y|_],
-    avaliate_w(X,Y,AuxSum,Out1), !;
+    avaliate_w(X,Y,AuxSum,Out1),
     valueWhite(Rest,Out1,OutVal).
 
 
