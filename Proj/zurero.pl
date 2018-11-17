@@ -111,32 +111,37 @@ simAllMoves(PlayerTurn,Tab) :-
     getMinList(OutList2, MinX),
     getMaxList(OutList2, MaxX),
 
-    simMovesUp(PlayerTurn,MinY, MaxY,Lin,Lout),
+    simMovesUp(PlayerTurn,MinY,MaxY,Lin,Lout,Tab),
     
 
     true. 
 
-simMovesUp(PlayerTurn,MaxY, MaxY, Lin, Lout) :- true.
-simMovesUp(PlayerTurn,MinY, MaxY, Lin, Lout) :- 
+simMovesUp(PlayerTurn,MaxY, MaxY, Lin, Lout,Tab) :- true.
+simMovesUp(PlayerTurn,MinY, MaxY, Lin, Lout,Tab) :- 
     startSim,
     updateSim(PlayerTurn,'u',MinY,Tab),
-
     value(_,PlayerTurn,Value),
-
     append(Lin, [Value, 'u', MinY], Lout),
     endSim.
 
-value(Board, Player, Value) :- 
-    fail.
+value(Board, player1, Value) :- 
+    b_piecesSim(Lb),
+    valueBlack(Lb,OutValB),
+    % White - black points
+    true.
     
+value(Board, player2, Value) :-
+    Value = 10,
+    % Black - white points
+    true.
 
 
 getBestMoves([], _, Aux, OutList, SizeAux, SizeOut) :- OutList = Aux, SizeOut = SizeAux.
 getBestMoves(List, CurrMax, Aux, OutList, SizeAux, SizeOut) :- fail.
     % OutList format will be [MoveDir, MoveIndex]
     % Usar o if else das aulas
-    % if List.head > CurrMax, clear Aux, SizeAux = 0, append [MoveDir, MoveIndex], getBestMoves(Tail, List.head, NewAux, OutList)
-    % else if List.head == CurrMax (permitir multiplas jogadas, depois escolhe 1 random dessas), append [MoveDir, MoveIndex], SizeAux++ ,getBestMoves(Tail, CurrMax, NewAux, OutList)
+    % if List.head.head > CurrMax, clear Aux, SizeAux = 0, append [MoveDir, MoveIndex], getBestMoves(Tail, List.head, NewAux, OutList)
+    % else if List.head.head == CurrMax (permitir multiplas jogadas, depois escolhe 1 random dessas), append [MoveDir, MoveIndex], SizeAux++ ,getBestMoves(Tail, CurrMax, NewAux, OutList)
     % else getBestMoves(Tail, CurrMax, NewAux, OutList)
     
 selAMove(BestMoves,SizeList,MoveDir,MoveIndex) :-
@@ -295,72 +300,81 @@ charToIndex([Char|_],Index) :-
 terminate(GameMode,'q',Player,_) :- true.
 terminate(GameMode,_,Player,Tab) :- game_over(Tab,Winner), continueGame(Winner, GameMode,Player, Tab).
 
-validate_hor_b(X,Y) :-
+validate_hor_b(X,Y,L) :-
 Xmax is X+4,
 between(X,Xmax,N),
-b_pieces(L),
 \+member([N,Y], L), !, fail; true.
 
-validate_vert_b(X,Y) :-
+validate_vert_b(X,Y,L) :-
 Ymax is Y+4,
 between(Y,Ymax,N),
-b_pieces(L),
 \+member([X,N], L), !, fail; true.
 
-validate_dia1_b(X,Y) :-
+validate_dia1_b(X,Y,L) :-
 between(0,4,N),
 Xnew is X + N,
 Ynew is Y + N,
-b_pieces(L),
 \+member([Xnew,Ynew], L), !, fail; true.
 
-validate_dia2_b(X,Y) :-
+validate_dia2_b(X,Y,L) :-
 between(0,4,N),
 Xnew is X + N,
 Ynew is Y - N,
-b_pieces(L),
 \+member([Xnew,Ynew], L), !, fail; true.
 
 
-validate_hor_w(X,Y) :-
+validate_hor_w(X,Y,L) :-
 Xmax is X+4,
 between(X,Xmax,N),
-w_pieces(L),
 \+member([N,Y], L), !, fail; true.
 
-validate_vert_w(X,Y) :-
+validate_vert_w(X,Y,L) :-
 Ymax is Y+4,
 between(Y,Ymax,N),
-w_pieces(L),
 \+member([X,N], L), !, fail; true.
 
-validate_dia1_w(X,Y) :-
+validate_dia1_w(X,Y,L) :-
 between(0,4,N),
 Xnew is X + N,
 Ynew is Y + N,
-w_pieces(L),
 \+member([Xnew,Ynew], L), !, fail; true.
 
-validate_dia2_w(X,Y) :-
+validate_dia2_w(X,Y,L) :-
 between(0,4,N),
 Xnew is X + N,
 Ynew is Y - N,
-w_pieces(L),
 \+member([Xnew,Ynew], L), !, fail; true.
 
 
 
 validate_b(X,Y) :-
-validate_hor_b(X,Y), !;
-validate_vert_b(X,Y), !;
-validate_dia1_b(X,Y), !;
-validate_dia2_b(X,Y).
+b_pieces(L),
+validate_hor_b(X,Y,L), !;
+b_pieces(L),
+validate_vert_b(X,Y,L), !;
+b_pieces(L),
+validate_dia1_b(X,Y,L), !;
+b_pieces(L),
+validate_dia2_b(X,Y,L).
 
 validate_w(X,Y) :- 
-validate_hor_w(X,Y), !;
-validate_vert_w(X,Y), !;
-validate_dia1_w(X,Y), !;
-validate_dia2_w(X,Y).
+w_pieces(L),    
+validate_hor_w(X,Y,L), !;
+w_pieces(L), 
+validate_vert_w(X,Y,L), !;
+w_pieces(L), 
+validate_dia1_w(X,Y,L), !;
+w_pieces(L), 
+validate_dia2_w(X,Y,L).
+
+avaliate_b(X,Y) :-
+    avaliate_hor_b(X,Y,Lw), !;
+    avaliate_vert_b(X,Y,Lw), !;
+    avaliate_dia1_b(X,Y,Lw), !;
+    avaliate_dia2_b(X,Y,Lw).
+
+
+
 
 game_over(Tab,Winner) :-
 
@@ -375,7 +389,6 @@ Winner = none).
 %%write(Winner), nl.
 
 
-
 checkBlack([H|Rest]) :-
     H = [X|Aux],
     Aux = [Y|_],
@@ -387,6 +400,21 @@ checkWhite([H|Rest]) :-
     Aux = [Y|_],
     validate_w(X,Y), !;
     checkWhite(Rest).
+
+valueBlack([],OutVal,OutVal).
+valueBlack([H|Rest],AuxSum,OutVal) :-
+    H = [X|Aux],
+    Aux = [Y|_],
+    avaliate_b(X,Y,AuxSum,Out1), !;
+    valueBlack(Rest,Out1,OutVal).
+
+valueWhite([],OutVal,OutVal).
+valueWhite([H|Rest],AuxSum,OutVal) :-
+    H = [X|Aux],
+    Aux = [Y|_],
+    avaliate_w(X,Y,AuxSum,Out1), !;
+    valueWhite(Rest,Out1,OutVal).
+
 
 continueGame(none, GameMode,Player, Tab) :-
     %%format("In continueGame", []), nl,
