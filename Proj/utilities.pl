@@ -92,6 +92,7 @@ setupTestTab(Tab) :-
 	storeCell(blackStone,4,4),
 	storeCell(blackStone,5,5),
 	storeCell(blackStone,6,6),
+	storeCell(blackStone,7,7),
 	storeCell(blackStone,2,3),
 	storeCell(blackStone,1,3),
 	storeCell(whiteStone,4,3),

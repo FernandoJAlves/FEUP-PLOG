@@ -379,7 +379,7 @@ avaliate_b(X,Y,Aux1,OutVal) :-
     avaliate_vert_b(X,Y,Lw,Lb,Aux2,Aux3),
     avaliate_dia1_b(X,Y,Lw,Lb,Aux3,Aux4),
     avaliate_dia2_b(X,Y,Lw,Lb,Aux4,Aux5),
-    OutVal is Aux5 + Aux1.
+    OutVal is Aux5.
 
 avaliate_w(X,Y,Aux1,OutVal) :-
     b_piecesSim(Lb),
@@ -469,8 +469,6 @@ avaliate_dia1_w(X,Y,Lw,Lb,Aux1,Aux2) :-
     Nmax is X+5,
     OldNb is 0,
     OldNw is 0,
-    %%format("AquiDentro1",[]), nl,
-    %%format("X: ~w   Y: ~w   Lw: ~w   OldNw: ~w   Nmax: ~w",[X,Y,Lw,OldNw,Nmax]), nl,
     countDia1(X,Y,Lw,OldNw,NewNw,Nmax),
     countDia1(X,Y,Lb,OldNb,NewNb,Nmax),
     scoreLine(NewNw,NewNb,Aval),
