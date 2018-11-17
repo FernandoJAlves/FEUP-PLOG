@@ -74,28 +74,31 @@ copyDataBase :-
 	findCopyW.
 
 
-scoreLine(_,1,OutValue) :- OutValue = 0.
-scoreLine(_,2,OutValue) :- OutValue = 0.
-scoreLine(_,3,OutValue) :- OutValue = 0.
-scoreLine(_,4,OutValue) :- OutValue = 0.
-scoreLine(1,0,OutValue) :- OutValue = 1.
-scoreLine(2,0,OutValue) :- OutValue = 10.
-scoreLine(3,0,OutValue) :- OutValue = 50.
-scoreLine(4,0,OutValue) :- OutValue = 100.
-scoreLine(5,0,OutValue) :- OutValue = 10000.
+scoreLine(_,1,OutValue) :- OutValue is 0.
+scoreLine(_,2,OutValue) :- OutValue is 0.
+scoreLine(_,3,OutValue) :- OutValue is 0.
+scoreLine(_,4,OutValue) :- OutValue is 0.
+scoreLine(1,0,OutValue) :- OutValue is 1.
+scoreLine(2,0,OutValue) :- OutValue is 10.
+scoreLine(3,0,OutValue) :- OutValue is 50.
+scoreLine(4,0,OutValue) :- OutValue is 100.
+scoreLine(5,0,OutValue) :- OutValue is 10000.
 
-
+ifElse(C,G,E) :- C, !, G.
+ifElse(C,G,E) :- E.
 
 
 setupTestTab(Tab) :-
-	storeCell(blackStone,1,1),
-	storeCell(blackStone,2,1),
-	storeCell(blackStone,3,1),
-	storeCell(whiteStone,1,2),
-	storeCell(whiteStone,2,2),
-	storeCell(whiteStone,3,2),
-	Tab = [[blackStone,whiteStone,emptySpace,emptySpace,emptySpace],
-			[blackStone,whiteStone,emptySpace,emptySpace,emptySpace],
-			[blackStone,whiteStone,emptySpace,emptySpace,emptySpace],
-			[emptySpace,emptySpace,emptySpace,emptySpace,emptySpace],
-			[emptySpace,emptySpace,emptySpace,emptySpace,emptySpace]].
+	storeCell(blackStone,5,2),
+	storeCell(blackStone,4,2),
+	storeCell(blackStone,5,3),
+	storeCell(blackStone,4,3),
+	storeCell(blackStone,3,3),
+	Tab = [[emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace],
+			[emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace],
+			[emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace],
+			[emptySpace,blackStone,blackStone,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace],
+			[emptySpace,blackStone,blackStone,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace],
+			[emptySpace,emptySpace,blackStone,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace],
+			[emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace],
+			[emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace]].

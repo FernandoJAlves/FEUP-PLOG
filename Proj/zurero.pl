@@ -84,83 +84,6 @@ playBot(PlayerTurn,2,Direction,Tab,NewTab):-
     update(PlayerTurn,MoveDir,MoveIndex,Tab,NewTab).
 
 
-
-choose_move(Tab, 1, MoveDir, MoveIndex) :-
-    currentPieces(Tab,Pieces),
-    random(0,4,Aux),
-    %%nl, nl, format("Dir: ~w    Pieces: ~w", [Aux, Pieces]), nl,
-    choose_move_dir(Pieces, Aux, Out1, Out2),
-    MoveDir = Out1,
-    MoveIndex = Out2.
-
-choose_move(Tab, 2, MoveDir, MoveIndex) :-
-
-    simAllMoves,
-
-    %%fazer cada jogada e avaliar o tabuleiro
-
-    MoveDir = Out1,
-    MoveIndex = Out2.
-
-
-simAllMoves(PlayerTurn,Tab) :- 
-    currentPieces(Tab,Pieces),
-    getYcoords(Pieces, Aux, OutList1),
-    getMinList(OutList1, MinY),
-    getMaxList(OutList1, MaxY),
-
-    getXcoords(Pieces, Aux, OutList2),
-    getMinList(OutList2, MinX),
-    getMaxList(OutList2, MaxX),
-
-    simMovesUp(PlayerTurn,MinY,MaxY,Lin,Lout,Tab),
-    
-
-    true. 
-
-simMovesUp(PlayerTurn,MaxY, MaxY, Lin, Lout,Tab) :- true.
-simMovesUp(PlayerTurn,MinY, MaxY, Lin, Lout,Tab) :- 
-    startSim,
-    updateSim(PlayerTurn,'u',MinY,Tab),
-    value(_,PlayerTurn,Value),
-    append(Lin, [Value, 'u', MinY], Lout),
-    endSim.
-
-value(Board, player1, Value) :- 
-    b_piecesSim(Lb),
-    valueBlack(Lb,OutValB),
-    % White - black points
-    true.
-    
-value(Board, player2, Value) :-
-    Value = 10,
-    % Black - white points
-    true.
-
-
-getBestMoves([], _, Aux, OutList, SizeAux, SizeOut) :- OutList = Aux, SizeOut = SizeAux.
-getBestMoves(List, CurrMax, Aux, OutList, SizeAux, SizeOut) :- fail.
-    % OutList format will be [MoveDir, MoveIndex]
-    % Usar o if else das aulas
-    % if List.head.head > CurrMax, clear Aux, SizeAux = 0, append [MoveDir, MoveIndex], getBestMoves(Tail, List.head, NewAux, OutList)
-    % else if List.head.head == CurrMax (permitir multiplas jogadas, depois escolhe 1 random dessas), append [MoveDir, MoveIndex], SizeAux++ ,getBestMoves(Tail, CurrMax, NewAux, OutList)
-    % else getBestMoves(Tail, CurrMax, NewAux, OutList)
-    
-selAMove(BestMoves,SizeList,MoveDir,MoveIndex) :-
-    random(0, SizeList, Index),
-    iterateList(Index, BestMoves, Out1, Out2),
-    MoveDir = Out1,
-    MoveIndex = Out2.
-
-iterateList(0, [H|Rest], MoveDir, MoveIndex) :-
-    H = [MoveDir|Aux],
-    Aux = [MoveIndex|_].
-iterateList(Index, [H|Rest], MoveDir, MoveIndex) :-
-    NewIndex is Index-1,
-    iterateList(NewIndex, Rest, MoveDir, MoveIndex).
-
-
-
 %%move cima    
 choose_move_dir(Moves, 0, Out1, Out2) :- 
     range_hor(Moves, Xval),
@@ -184,7 +107,6 @@ choose_move_dir(Moves, 3, Out1, Out2) :-
 
 
 
-
 getXcoords([], Xvalues, FinalList) :- FinalList = Xvalues.
 getXcoords([H|Rest], Xvalues, FinalList) :-
     H = [X|Aux],
@@ -198,7 +120,6 @@ getYcoords([H|Rest], Yvalues, FinalList) :-
     Aux = [Y|_],
     append(Yvalues, [Y], NewList),
     getYcoords(Rest, NewList, FinalList).
-
 
 
 range_hor(Pieces, Out) :- 
@@ -267,10 +188,7 @@ update(PlayerTurn,'q',Coord,Tab,NewTab):- true.
 update(PlayerTurn,_,Coord,Tab,NewTab):- write('Invalid Direction. You can only choose u(up), d(down), l(left) or r(right).'),nl,fail.
 
 
-updateSim(PlayerTurn,'l',MoveIndex,Tab) :- playLeftSim(PlayerTurn,Coord,Tab).
-updateSim(PlayerTurn,'r',MoveIndex,Tab) :- playRightSim(PlayerTurn,Coord,Tab).
-updateSim(PlayerTurn,'u',MoveIndex,Tab) :- playUpSim(PlayerTurn,Coord,Tab).
-updateSim(PlayerTurn,'d',MoveIndex,Tab) :- playDownSim(PlayerTurn,Coord,Tab).
+
 
 
 charToIndex([Char|_],Index) :-
@@ -369,12 +287,6 @@ validate_dia1_w(X,Y,L), !;
 w_pieces(L), 
 validate_dia2_w(X,Y,L).
 
-avaliate_b(X,Y) :-
-    avaliate_hor_b(X,Y,Lw), !;
-    avaliate_vert_b(X,Y,Lw), !;
-    avaliate_dia1_b(X,Y,Lw), !;
-    avaliate_dia2_b(X,Y,Lw).
-
 
 
 
@@ -383,12 +295,9 @@ game_over(Tab,Winner) :-
 b_pieces(Lb),
 w_pieces(Lw),
 
-%%write(Lb), nl,
-
 (checkBlack(Lb) -> Winner = player2; 
 checkWhite(Lw) -> Winner = player1;
 Winner = none).
-%%write(Winner), nl.
 
 
 checkBlack([H|Rest]) :-
@@ -402,20 +311,6 @@ checkWhite([H|Rest]) :-
     Aux = [Y|_],
     validate_w(X,Y), !;
     checkWhite(Rest).
-
-valueBlack([],OutVal,OutVal).
-valueBlack([H|Rest],AuxSum,OutVal) :-
-    H = [X|Aux],
-    Aux = [Y|_],
-    avaliate_b(X,Y,AuxSum,Out1), !;
-    valueBlack(Rest,Out1,OutVal).
-
-valueWhite([],OutVal,OutVal).
-valueWhite([H|Rest],AuxSum,OutVal) :-
-    H = [X|Aux],
-    Aux = [Y|_],
-    avaliate_w(X,Y,AuxSum,Out1), !;
-    valueWhite(Rest,Out1,OutVal).
 
 
 continueGame(none, GameMode,Player, Tab) :-
