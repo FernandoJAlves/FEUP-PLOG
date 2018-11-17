@@ -92,14 +92,6 @@ choose_move(Tab, 1, MoveDir, MoveIndex) :-
     MoveIndex = Out2.
 
 choose_move(Tab, 2, MoveDir, MoveIndex) :-
-    currentPieces(Tab,Pieces),
-    getYcoords(Pieces, Aux, OutList1),
-    getMinList(OutList1, MinY),
-    getMaxList(OutList1, MaxY),
-
-    getXcoords(Pieces, Aux, OutList2),
-    getMinList(OutList2, MinX),
-    getMaxList(OutList2, MaxX),
 
     simAllMoves,
 
@@ -109,16 +101,59 @@ choose_move(Tab, 2, MoveDir, MoveIndex) :-
     MoveIndex = Out2.
 
 
-simAllMoves(MinX, MaxX, MinY, MaxY) :- 
+simAllMoves(PlayerTurn,Tab) :- 
+    currentPieces(Tab,Pieces),
+    getYcoords(Pieces, Aux, OutList1),
+    getMinList(OutList1, MinY),
+    getMaxList(OutList1, MaxY),
+
+    getXcoords(Pieces, Aux, OutList2),
+    getMinList(OutList2, MinX),
+    getMaxList(OutList2, MaxX),
+
+    simMovesUp(PlayerTurn,MinY, MaxY,Lin,Lout),
     
 
     true. 
 
-value(Board, Player, Value) :- fail.
+simMovesUp(PlayerTurn,MaxY, MaxY, Lin, Lout) :- true.
+simMovesUp(PlayerTurn,MinY, MaxY, Lin, Lout) :- 
+    startSim,
+    updateSim(PlayerTurn,'u',MinY,Tab),
+
+    value(_,PlayerTurn,Value),
+
+    append(Lin, [Value, 'u', MinY], Lout),
+    endSim.
+
+value(Board, Player, Value) :- 
+    fail.
     
 
 
+getBestMoves([], _, Aux, OutList, SizeAux, SizeOut) :- OutList = Aux, SizeOut = SizeAux.
+getBestMoves(List, CurrMax, Aux, OutList, SizeAux, SizeOut) :- fail.
+    % OutList format will be [MoveDir, MoveIndex]
+    % Usar o if else das aulas
+    % if List.head > CurrMax, clear Aux, SizeAux = 0, append [MoveDir, MoveIndex], getBestMoves(Tail, List.head, NewAux, OutList)
+    % else if List.head == CurrMax (permitir multiplas jogadas, depois escolhe 1 random dessas), append [MoveDir, MoveIndex], SizeAux++ ,getBestMoves(Tail, CurrMax, NewAux, OutList)
+    % else getBestMoves(Tail, CurrMax, NewAux, OutList)
     
+selAMove(BestMoves,SizeList,MoveDir,MoveIndex) :-
+    random(0, SizeList, Index),
+    iterateList(Index, BestMoves, Out1, Out2),
+    MoveDir = Out1,
+    MoveIndex = Out2.
+
+iterateList(0, [H|Rest], MoveDir, MoveIndex) :-
+    H = [MoveDir|Aux],
+    Aux = [MoveIndex|_].
+iterateList(Index, [H|Rest], MoveDir, MoveIndex) :-
+    NewIndex is Index-1,
+    iterateList(NewIndex, Rest, MoveDir, MoveIndex).
+
+
+
 %%move cima    
 choose_move_dir(Moves, 0, Out1, Out2) :- 
     range_hor(Moves, Xval),
