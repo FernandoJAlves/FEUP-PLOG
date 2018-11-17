@@ -15,7 +15,7 @@ choose_move(Tab, 1, MoveDir, MoveIndex) :-
 
 choose_move(Tab, 2, MoveDir, MoveIndex) :-
 
-    PlayerTurn = player1,
+    PlayerTurn = player2,
 
     simAllMoves(PlayerTurn,Tab,Moves),
 
@@ -40,17 +40,13 @@ simAllMoves(PlayerTurn,Tab,Moves) :-
 
 simMovesUp(PlayerTurn,MaxY, MaxY, Lin, Lout,Tab) :- Lout = Lin.
 simMovesUp(PlayerTurn,MinY, MaxY, Lin, Lout,Tab) :- 
-    format("Hi1", []), nl,
     startSim,
     updateSim(PlayerTurn,'u',MinY,Tab),
-    format("Hi2", []), nl,
     value(_,PlayerTurn,Value),
-    format("Hi3", []), nl,
     append(Lin, [[Value, 'u', MinY]], Aux),
-    format("Hi4", []), nl,
     NewMin is MinY+1,
+    format("Value: ~w", [Value]),
     endSim,
-    format("Hi5", []), nl,
     simMovesUp(PlayerTurn,NewMin, MaxY, Aux, Lout,Tab).
     
 
