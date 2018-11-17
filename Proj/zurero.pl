@@ -4,6 +4,7 @@
 :- include('utilities.pl').
 :- include('menus.pl').
 :- include('gameLogic.pl').
+:- include('botPlayer.pl').
 :- use_module(library(lists)).
 :- use_module(library(between)).
 :- use_module(library(random)).
@@ -249,7 +250,7 @@ interpretAux(X,Num):-
     ),
     
     checkCharList(X),
-    number_chars(N,X),
+    number_codes(N,X),
     Num is N,
     (
         N > 19 -> write('Invalid Input: You have to select one position between 1 and 19'),nl,fail;
