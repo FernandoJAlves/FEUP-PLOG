@@ -28,15 +28,20 @@ choose_move(Tab, 2, MoveDir, MoveIndex) :-
 
 simAllMoves(PlayerTurn,Tab,Moves) :- 
     currentPieces(Tab,Pieces),
-    getYcoords(Pieces, Aux, OutList1),
+    getYcoords(Pieces, Aux1, OutList1),
     getMinList(OutList1, MinY),
     getMaxList(OutList1, MaxY),
 
-    getXcoords(Pieces, Aux, OutList2),
+    getXcoords(Pieces, Aux2, OutList2),
     getMinList(OutList2, MinX),
     getMaxList(OutList2, MaxX),
 
-    simMovesUp(PlayerTurn,MinY,MaxY,Lin,Lout,Tab).
+    % Ver aqui
+    NewMinY is 20-MaxY,
+    NewMaxY is 21-MaxY,
+    NewMaxX is MaxX+1,
+
+    simMovesUp(PlayerTurn,NewMinY,NewMaxY,Lin,Lout,Tab).
 
 simMovesUp(PlayerTurn,MaxY, MaxY, Lin, Lout,Tab) :- Lout = Lin.
 simMovesUp(PlayerTurn,MinY, MaxY, Lin, Lout,Tab) :- 
@@ -45,7 +50,7 @@ simMovesUp(PlayerTurn,MinY, MaxY, Lin, Lout,Tab) :-
     value(_,PlayerTurn,Value),
     append(Lin, [[Value, 'u', MinY]], Aux),
     NewMin is MinY+1,
-    format("Value: ~w", [Value]),
+    format("Value: ~w", [Value]), nl,
     endSim,
     simMovesUp(PlayerTurn,NewMin, MaxY, Aux, Lout,Tab).
     
