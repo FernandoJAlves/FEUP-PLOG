@@ -42,8 +42,8 @@ gameModeMenu :-
         gameModeOptions(Input).
 
 gameModeOptions('1') :- startGame(pvp).
-gameModeOptions('2') :- startGame(pvb).
-gameModeOptions('3') :- startGame(bvb).
+gameModeOptions('2') :- botMenu,startGame(pvb).
+gameModeOptions('3') :- botMenu,startGame(bvb).
 gameModeOptions('4').
 gameModeOptions(_) :- 
     nl,
@@ -66,8 +66,8 @@ botMenu :-
     readChar(Input),
     botOptions(Input). 
 
-botOptions('1') :- setBotInt(1).
-botOptions('2') :- setBotInt(2).
+botOptions('1') :- deactivateBot,setBotInt(1).
+botOptions('2') :- deactivateBot,setBotInt(2).
 botOptions(_) :- 
     write('Error: Invalid Level of Intelligence'),nl,
     pressEnterToContinue, nl,
