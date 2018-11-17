@@ -126,9 +126,10 @@ simMovesUp(PlayerTurn,MinY, MaxY, Lin, Lout,Tab) :-
 
 value(Board, player1, Value) :- 
     b_piecesSim(Lb),
-    valueBlack(Lb,OutValB),
-    % White - black points
-    true.
+    valueBlack(Lb,0,OutVal1),
+    w_piecesSim(Lw),
+    valueWhite(Lw,0,OutVal2),
+    Value is OutVal2 - OutVal1.
     
 value(Board, player2, Value) :-
     Value = 10,
@@ -367,13 +368,132 @@ validate_dia1_w(X,Y,L), !;
 w_pieces(L), 
 validate_dia2_w(X,Y,L).
 
-avaliate_b(X,Y) :-
-    avaliate_hor_b(X,Y,Lw), !;
-    avaliate_vert_b(X,Y,Lw), !;
-    avaliate_dia1_b(X,Y,Lw), !;
-    avaliate_dia2_b(X,Y,Lw).
+avaliate_b(X,Y,Aux1,OutVal) :-
+    b_piecesSim(Lb),
+    w_piecesSim(Lw),
+
+    avaliate_hor_b(X,Y,Lw,Lb,Aux1,Aux2),
+    avaliate_vert_b(X,Y,Lw,Lb,Aux2,Aux3),
+    avaliate_dia1_b(X,Y,Lw,Lb,Aux3,Aux4),
+    avaliate_dia2_b(X,Y,Lw,Lb,Aux4,Aux5),
+    OutVal is Aux5 + Aux1.
+
+avaliate_w(X,Y,Aux1,OutVal) :-
+    b_piecesSim(Lb),
+    w_piecesSim(Lw),
+
+    avaliate_hor_w(X,Y,Lw,Lb,Aux1,Aux2),
+    avaliate_vert_w(X,Y,Lw,Lb,Aux2,Aux3),
+    avaliate_dia1_w(X,Y,Lw,Lb,Aux3,Aux4),
+    avaliate_dia2_w(X,Y,Lw,Lb,Aux4,Aux5),
+    OutVal is Aux5 + Aux1.
 
 
+countHor(Xmax,Y,L,OldN,NewN,Xmax) :- NewN = OldN.
+countHor(X,Y,L,OldN,NewN,Xmax) :-
+    ifElse(member([X,Y], L),Aux is OldN+1,Aux is OldN),
+    NewX is X+1,
+    countHor(NewX,Y,L,Aux,NewN,Xmax).
+
+countVert(X,Ymax,L,OldN,NewN,Ymax) :- NewN = OldN.
+countVert(X,Y,L,OldN,NewN,Ymax) :-
+    ifElse(member([X,Y], L),Aux is OldN+1,Aux is OldN),
+    NewY is Y+1,
+    countVert(X,NewY,L,Aux,NewN,Ymax).
+
+countDia1(Nmax,Nmax,L,OldN,NewN,Nmax) :- NewN = OldN.
+countDia1(X,Y,L,OldN,NewN,Nmax) :-
+    ifElse(member([X,Y], L),Aux is OldN+1,Aux is OldN),
+    NewX is X+1,
+    NewY is Y+1,
+    countDia1(NewX,NewY,L,Aux,NewN,Nmax).
+
+countDia2(Nmax,_,L,OldN,NewN,Nmax) :- NewN = OldN.
+countDia2(X,Y,L,OldN,NewN,Nmax) :-
+    ifElse(member([X,Y], L),Aux is OldN+1,Aux is OldN),
+    NewX is X+1,
+    NewY is Y-1,
+    countDia2(NewX,NewY,L,Aux,NewN,Nmax).
+
+
+avaliate_hor_b(X,Y,Lw,Lb,Aux1,Aux2) :-
+    Xmax is X+5,
+    OldNb is 0,
+    OldNw is 0,
+    countHor(X,Y,Lw,OldNw,NewNw,Xmax),
+    countHor(X,Y,Lb,OldNb,NewNb,Xmax),
+    scoreLine(NewNb,NewNw,Aval),
+    nl, format("Black:", []), nl,
+    format("Aux1: ~w    Aval: ~w", [Aux1,Aval]), nl,
+    Aux2 is Aux1 + Aval,
+    format("Aux2: ~w", [Aux2]), nl.
+    
+
+avaliate_hor_w(X,Y,Lw,Lb,Aux1,Aux2) :-
+    Xmax is X+5,
+    OldNb is 0,
+    OldNw is 0,
+    countHor(X,Y,Lw,OldNw,NewNw,Xmax),
+    countHor(X,Y,Lb,OldNb,NewNb,Xmax),
+    scoreLine(NewNw,NewNb,Aval),
+    nl, format("White:", []), nl,
+    format("Aux1: ~w    Aval: ~w", [Aux1,Aval]), nl,
+    Aux2 is Aux1 + Aval,
+    format("Aux2: ~w", [Aux2]), nl.
+
+avaliate_vert_b(X,Y,Lw,Lb,Aux1,Aux2) :-
+    Ymax is Y+5,
+    OldNb is 0,
+    OldNw is 0,
+    countVert(X,Y,Lw,OldNw,NewNw,Ymax),
+    countVert(X,Y,Lb,OldNb,NewNb,Ymax),
+    scoreLine(NewNb,NewNw,Aval),
+    Aux2 is Aux1 + Aval.
+
+avaliate_vert_w(X,Y,Lw,Lb,Aux1,Aux2) :-
+    Ymax is Y+5,
+    OldNb is 0,
+    OldNw is 0,
+    countVert(X,Y,Lw,OldNw,NewNw,Ymax),
+    countVert(X,Y,Lb,OldNb,NewNb,Ymax),
+    scoreLine(NewNw,NewNb,Aval),
+    Aux2 is Aux1 + Aval.
+
+avaliate_dia1_b(X,Y,Lw,Lb,Aux1,Aux2) :-
+    Nmax is X+5,
+    OldNb is 0,
+    OldNw is 0,
+    countDia1(X,Y,Lw,OldNw,NewNw,Nmax),
+    countDia1(X,Y,Lb,OldNb,NewNb,Nmax),
+    scoreLine(NewNb,NewNw,Aval),
+    Aux2 is Aux1 + Aval.
+
+avaliate_dia1_w(X,Y,Lw,Lb,Aux1,Aux2) :-
+    Nmax is X+5,
+    OldNb is 0,
+    OldNw is 0,
+    countDia1(X,Y,Lw,OldNw,NewNw,Nmax),
+    countDia1(X,Y,Lb,OldNb,NewNb,Nmax),
+    scoreLine(NewNw,NewNb,Aval),
+    Aux2 is Aux1 + Aval.
+
+avaliate_dia2_b(X,Y,Lw,Lb,Aux1,Aux2) :-
+    Nmax is X+5,
+    OldNb is 0,
+    OldNw is 0,
+    countDia2(X,Y,Lw,OldNw,NewNw,Nmax),
+    countDia2(X,Y,Lb,OldNb,NewNb,Nmax),
+    scoreLine(NewNb,NewNw,Aval),
+    Aux2 is Aux1 + Aval.
+
+avaliate_dia2_w(X,Y,Lw,Lb,Aux1,Aux2) :-
+    Nmax is X+5,
+    OldNb is 0,
+    OldNw is 0,
+    countDia2(X,Y,Lw,OldNw,NewNw,Nmax),
+    countDia2(X,Y,Lb,OldNb,NewNb,Nmax),
+    scoreLine(NewNw,NewNb,Aval),
+    Aux2 is Aux1 + Aval.
 
 
 game_over(Tab,Winner) :-
