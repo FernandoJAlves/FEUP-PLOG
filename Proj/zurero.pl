@@ -57,10 +57,11 @@ playHuman(PlayerTurn,Direction,Tab,NewTab) :-
     repeat,
         playerMessage(PlayerTurn),nl,
         write('Write your command: '),
-        readPlay(Input),
-        atom_chars(Input, Chars),
-        Chars = [Direction|Aux],
+        readPlay(Chars),
+        Chars = [DirectionCode|Aux],
+        char_code(Direction, DirectionCode),
         
+        write(Direction),
         (Direction == 'q' -> true;
         interpret(Direction,Aux,Num),!,
         update(PlayerTurn,Direction,Num,Tab,NewTab)).
