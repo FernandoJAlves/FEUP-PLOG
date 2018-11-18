@@ -258,7 +258,7 @@ isEmptyCell(Y,X) :-
     ifElse(blackCell(Y,X), fail, ifElse(whiteCell(Y,X), fail, true)).
 
 % Returns the valid moves
-valid_moves(Board, Player, ListOfMoves, ListSize) :-
+valid_moves(Board, Player, ListOfMoves) :-
     currentPieces(Tab,Pieces),
     getYcoords(Pieces, Aux1, OutList1),
     getMinList(OutList1, MinY),

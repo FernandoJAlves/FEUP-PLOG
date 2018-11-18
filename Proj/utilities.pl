@@ -92,7 +92,7 @@ scoreLine(_,3,OutValue) :- OutValue is 0.
 scoreLine(_,4,OutValue) :- OutValue is 0.
 scoreLine(1,0,OutValue) :- OutValue is 0.
 scoreLine(2,0,OutValue) :- OutValue is 0.
-scoreLine(3,0,OutValue) :- OutValue is 50.
+scoreLine(3,0,OutValue) :- OutValue is 100.
 scoreLine(4,0,OutValue) :- OutValue is 500.
 scoreLine(5,0,OutValue) :- OutValue is 10000.
 
