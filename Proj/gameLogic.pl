@@ -3,20 +3,20 @@
 :- dynamic bSimCell/2.
 :- dynamic wSimCell/2.
 
-
+% Get the piece in a given position
 getPeca(Nlinha,Ncoluna,Tab,Peca) :-
     nth1(Nlinha,Tab,Linha),
     nth1(Ncoluna,Linha,Peca).
 
+% Gets the line in a given index
 getLinha(1,[Linha|_],Linha).
-
 getLinha(N,[_|Resto],Linha) :-
     N > 1,
     Next is N-1,
     getLinha(Next,Resto,Linha).
 
 
-
+% Sets a piece in a given position
 setPeca(1, ElemCol, NewElem, [RowAtTheHead|RemainingRows], [NewRowAtTheHead|RemainingRows]):-
 	setPecaLinha(ElemCol, NewElem, RowAtTheHead, NewRowAtTheHead).
 
@@ -25,62 +25,68 @@ setPeca(ElemRow, ElemCol, NewElem, [RowAtTheHead|RemainingRows], [RowAtTheHead|R
 	ElemRow1 is ElemRow-1,
 	setPeca(ElemRow1, ElemCol, NewElem, RemainingRows, ResultRemainingRows).
 
-%%% 1. position; 2. element to use on replacement; 3. current list; 4. resultant list.
+% Sets a piece in a line: 1. position; 2. element to use on replacement; 3. current list; 4. resultant list.
 setPecaLinha(1, Elem, [_|L], [Elem|L]).
 setPecaLinha(I, Elem, [H|L], [H|ResL]):-
 	I > 1,
 	I1 is I-1,
 	setPecaLinha(I1, Elem, L, ResL).
 
+% Get the piece in a line column
 getPeca(Linha,Coluna,Peca):-
     cell(Linha,Coluna,Peca).
 
+% Sets a piece in a given line
 setPeca(Linha):-
     retract(cell(Linha,Coluna,_)),
     assert(cell(Linha,Coluna,Peca)).
 
-
+% Plays left
 playLeft(PlayerTurn,I,Tab,NewTab) :-
     Index is 20-I,
     nth1(Index,Tab,Linha),
     ifElse((nth1(I2,Linha,Elem),Elem \= emptySpace,!),slideStoneFromLeft(PlayerTurn,Index,I2,Linha,Tab,Elem,NewTab),true).
 
+% Plays right
 playRight(PlayerTurn,I,Tab,NewTab) :-
     Index is 20-I,
     nth1(Index,Tab,Linha),
     reverse(Linha,Temp),
     ifElse((nth1(Aux,Temp,Elem),Elem \= emptySpace,!),(I2 is 20-Aux,slideStoneFromRight(PlayerTurn,Index,I2,Linha,Tab,Elem,NewTab)),true).
 
+% Plays up
 playUp(PlayerTurn,Index,Tab,NewTab) :-
     ifElse((getPeca(I2,Index,Tab,Elem),Elem \= emptySpace,!),slideStoneFromUp(PlayerTurn,I2,Index,Elem,Tab,NewTab),true).
 
+% Plays down
 playDown(PlayerTurn,Index,Tab,NewTab) :-
     reverse(Tab,Temp),
     ifElse((getPeca(Aux,Index,Temp,Elem),Elem \= emptySpace,!),(I2 is 20-Aux,slideStoneFromDown(PlayerTurn,I2,Index,Elem,Tab,NewTab)),true).
 
+% Plays left simulation
 playLeftSim(PlayerTurn,I,Tab) :-
     Index is 20-I,
     nth1(Index,Tab,Linha),
     ifElse((nth1(I2,Linha,Elem),Elem \= emptySpace,!),slideStoneFromLeftSim(PlayerTurn,Index,I2,Linha,Tab,Elem),true).
 
+% Plays right simulation
 playRightSim(PlayerTurn,I,Tab) :-
     Index is 20-I,
     nth1(Index,Tab,Linha),
     reverse(Linha,Temp),
     ifElse((nth1(Aux,Temp,Elem),Elem \= emptySpace,!),(I2 is 20-Aux,slideStoneFromRightSim(PlayerTurn,Index,I2,Linha,Tab,Elem)),true).
 
+% Plays up simulation
 playUpSim(PlayerTurn,Index,Tab) :-
     ifElse((getPeca(I2,Index,Tab,Elem),Elem \= emptySpace,!),slideStoneFromUpSim(PlayerTurn,I2,Index,Elem,Tab),true).
 
+% Plays down simulation
 playDownSim(PlayerTurn,Index,Tab) :-
     reverse(Tab,Temp),
     ifElse((getPeca(Aux,Index,Temp,Elem),Elem \= emptySpace,!),(I2 is 20-Aux,slideStoneFromDownSim(PlayerTurn,I2,Index,Elem,Tab)),true).
 
-
-
-
+% Slides a stone from left side
 slideStoneFromLeft(PlayerTurn,Index,I2,Linha,Tab,Stone,NewTab) :-
-    
     Num1 is I2+1,
     Num2 is I2-1,
     nth1(Num1,Linha,Elem),
@@ -94,7 +100,7 @@ slideStoneFromLeft(PlayerTurn,Index,I2,Linha,Tab,Stone,NewTab) :-
         storeCell(Stone,Index,Num1))
 ).
 
-
+% Slides a stone from right side
 slideStoneFromRight(PlayerTurn,Index,I2,Linha,Tab,Stone,NewTab) :-
     Num1 is I2-1,
     Num2 is I2+1,
@@ -109,7 +115,7 @@ slideStoneFromRight(PlayerTurn,Index,I2,Linha,Tab,Stone,NewTab) :-
         storeCell(Stone,Index,Num1))
 ).
 
-
+% Slides a stone from up side
 slideStoneFromUp(PlayerTurn,I2,Index,Stone,Tab,NewTab) :-
     Num1 is I2+1,
     Num2 is I2-1,
@@ -124,6 +130,7 @@ slideStoneFromUp(PlayerTurn,I2,Index,Stone,Tab,NewTab) :-
         storeCell(Stone,Num1,Index))
 ).
 
+% Slides a stone from down side
 slideStoneFromDown(PlayerTurn,I2,Index,Stone,Tab,NewTab) :-
     Num1 is I2-1,
     Num2 is I2+1,
@@ -139,9 +146,8 @@ slideStoneFromDown(PlayerTurn,I2,Index,Stone,Tab,NewTab) :-
 ).
 
 
-
+% Slides a stone from left side simulation
 slideStoneFromLeftSim(PlayerTurn,Index,I2,Linha,Tab,Stone) :-
-    
     Num1 is I2+1,
     Num2 is I2-1,
     nth1(Num1,Linha,Elem),
@@ -153,6 +159,7 @@ slideStoneFromLeftSim(PlayerTurn,Index,I2,Linha,Tab,Stone) :-
         storeSim(Stone,Index,Num1))
 ).
 
+% Slides a stone from right side simulation
 slideStoneFromRightSim(PlayerTurn,Index,I2,Linha,Tab,Stone) :-
     Num1 is I2-1,
     Num2 is I2+1,
@@ -165,6 +172,7 @@ slideStoneFromRightSim(PlayerTurn,Index,I2,Linha,Tab,Stone) :-
         storeSim(Stone,Index,Num1))
 ).
 
+% Slides a stone from up side simulation
 slideStoneFromUpSim(PlayerTurn,I2,Index,Stone,Tab) :-
     Num1 is I2+1,
     Num2 is I2-1,
@@ -177,6 +185,7 @@ slideStoneFromUpSim(PlayerTurn,I2,Index,Stone,Tab) :-
         storeSim(Stone,Num1,Index))
 ).
 
+% Slides a stone from down side simulation
 slideStoneFromDownSim(PlayerTurn,I2,Index,Stone,Tab) :-
     Num1 is I2-1,
     Num2 is I2+1,
@@ -189,74 +198,78 @@ slideStoneFromDownSim(PlayerTurn,I2,Index,Stone,Tab) :-
         storeSim(Stone,Num1,Index))
 ).
 
-
+% Gets the player symbol
 getPlayerSymbol(player1,whiteStone).
 getPlayerSymbol(player2,blackStone).
 
+% Changes the turn
 changeTurn(player1,player2).
 changeTurn(player2,player1).
 
+% Alternates the symbol
 otherSymbol(whiteStone,blackStone).
 otherSymbol(blackStone,whiteStone).
 
+% Stores a cell
 storeCell(whiteStone,Nlinha,Ncol) :- assert(whiteCell(Nlinha,Ncol)).
 storeCell(blackStone,Nlinha,Ncol) :- assert(blackCell(Nlinha,Ncol)).
 
+% Removes a cell
 rmCell(whiteStone,Nlinha,Ncol) :- retract(whiteCell(Nlinha,Ncol)).
 rmCell(blackStone,Nlinha,Ncol) :- retract(blackCell(Nlinha,Ncol)).
 
-
+% Gets the min of a list
 getMinList(List, Out) :-
     List = [H|Rest],
     getMinList(Rest, H, Out).
 getMinList([], Min, Out) :- Out = Min.
 getMinList([H|Rest], Min, Out) :-
-    %%format("H: ~w   Min: ~w", [H,Min]), nl,
     Min1 is min(H, Min),
     getMinList(Rest, Min1, Out).
 
+% Gets the max of a list
 getMaxList(List, Out) :-
     List = [H|Rest],
     getMaxList(Rest, H, Out).
 getMaxList([], Max, Out) :- Out = Max.
 getMaxList([H|Rest], Max, Out) :-
-    %%format("H: ~w   Max: ~w", [H,Max]), nl,
     Max1 is max(H, Max),
     getMaxList(Rest, Max1, Out).
 
-
-
+% Stores a cell in a simulation
 storeSim(whiteStone,Nlinha,Ncol) :- assert(wSimCell(Nlinha,Ncol)).
 storeSim(blackStone,Nlinha,Ncol) :- assert(bSimCell(Nlinha,Ncol)).
 
+% Removes a cell from a simulation
 rmSim(whiteStone,Nlinha,Ncol) :- retract(wSimCell(Nlinha,Ncol)).
 rmSim(blackStone,Nlinha,Ncol) :- retract(bSimCell(Nlinha,Ncol)).
 
+% Starts a simulation
 startSim :- 
     copyDataBase.
 
+% Ends a simulation
 endSim :-
     retractall(bSimCell(X,Y)),
     retractall(wSimCell(X,Y)).
 
+% Verifies is a cell is an empty cell
 isEmptyCell(Y,X) :-
     ifElse(blackCell(Y,X), fail, ifElse(whiteCell(Y,X), fail, true)).
 
+% Returns the valid moves
 valid_moves(Board, Player, ListOfMoves, ListSize) :-
     currentPieces(Tab,Pieces),
     getYcoords(Pieces, Aux1, OutList1),
     getMinList(OutList1, MinY),
     getMaxList(OutList1, MaxY),
-
     getXcoords(Pieces, Aux2, OutList2),
     getMinList(OutList2, MinX),
     getMaxList(OutList2, MaxX),
-
     NewMaxX is MaxX+1,
     NewMaxY is MaxY+1,
 
     SizeAux1 = 0,
-
     validateUp(MinX,NewMaxX,ListAux1,ListAux2,SizeAux1,SizeAux2),
     validateDown(MinX,NewMaxX,ListAux2,ListAux3,SizeAux2,SizeAux3),
     validateLeft(MinY,NewMaxY,ListAux3,ListAux4,SizeAux3,SizeAux4),
@@ -265,6 +278,7 @@ valid_moves(Board, Player, ListOfMoves, ListSize) :-
     ListOfMoves = ListAux5,
     ListSize = SizeAux5.
 
+% Validates up moves
 validateUp(MaxX,MaxX,ListAux1,ListAux2,SizeAux1,SizeAux2) :- ListAux2 = ListAux1, SizeAux2 = SizeAux1.
 validateUp(MinX,MaxX,ListAux1,ListAux2,SizeAux1,SizeAux2) :-
     NewMinX is MinX+1,
@@ -272,6 +286,7 @@ validateUp(MinX,MaxX,ListAux1,ListAux2,SizeAux1,SizeAux2) :-
                                                                                                                             NewSize is SizeAux1+1,
                                                                                                         validateUp(NewMinX,MaxX,NewList,ListAux2,NewSize,SizeAux2))).
 
+% Validates down moves
 validateDown(MaxX,MaxX,ListAux1,ListAux2,SizeAux1,SizeAux2) :- ListAux2 = ListAux1, SizeAux2 = SizeAux1.
 validateDown(MinX,MaxX,ListAux1,ListAux2,SizeAux1,SizeAux2) :-
     NewMinX is MinX+1,
@@ -279,8 +294,7 @@ validateDown(MinX,MaxX,ListAux1,ListAux2,SizeAux1,SizeAux2) :-
                                                                                                                                 NewSize is SizeAux1+1,
                                                                                                                                 validateDown(NewMinX,MaxX,NewList,ListAux2,NewSize,SizeAux2))).
 
-
-
+% Validates left moves
 validateLeft(MaxY,MaxY,ListAux1,ListAux2,SizeAux1,SizeAux2) :- ListAux2 = ListAux1, SizeAux2 = SizeAux1.
 validateLeft(MinY,MaxY,ListAux1,ListAux2,SizeAux1,SizeAux2) :-
     NewMinY is MinY+1,
@@ -289,8 +303,7 @@ validateLeft(MinY,MaxY,ListAux1,ListAux2,SizeAux1,SizeAux2) :-
                                                                                                                                 NewSize is SizeAux1+1,
                                                                                                                                 validateLeft(NewMinY,MaxY,NewList,ListAux2,NewSize,SizeAux2))).
 
-
-
+% Validates right moves
 validateRight(MaxY,MaxY,ListAux1,ListAux2,SizeAux1,SizeAux2) :- ListAux2 = ListAux1, SizeAux2 = SizeAux1.
 validateRight(MinY,MaxY,ListAux1,ListAux2,SizeAux1,SizeAux2) :-
     NewMinY is MinY+1,

@@ -5,6 +5,7 @@ setBotInt(Num):- assert(botInt(Num)).
 % Destroys current bot level
 deactivateBot :- retractall(botInt(Num)).
 
+
 % Chooses a move for the bot to make
 choose_move(Tab, 1, MoveDir, MoveIndex,PlayerTurn) :-
     valid_moves(Tab, PlayerTurn, ListOfMoves, ListSize),
@@ -13,7 +14,6 @@ choose_move(Tab, 1, MoveDir, MoveIndex,PlayerTurn) :-
     MoveDir = Out1,
     MoveIndex = Out2.
 choose_move(Tab, 2, MoveDir, MoveIndex,PlayerTurn) :-
-
     valid_moves(Tab, PlayerTurn, ListOfMoves, ListSize),
     format("ListOfMoves1: ~w", [ListOfMoves]),nl,
     simAllMoves(PlayerTurn,Tab,ListOfMoves,Out1,Out2),
@@ -23,16 +23,13 @@ choose_move(Tab, 2, MoveDir, MoveIndex,PlayerTurn) :-
 
 % Simulates all moves for a level 2 bot
 simAllMoves(PlayerTurn,Tab,ListOfMoves,MoveDir,MoveIndex) :- 
-    
     simMovesAux(PlayerTurn,ListOfMoves, [], Lout,Tab),
-
     format("Lout: ~w" ,[Lout]), nl,
     getBestMoves(Lout, -1000000, [], OutList, 0, SizeOut),
     format("OutList: ~w", [OutList]), nl,
     selAMove(OutList,SizeOut,Out1,Out2),
     MoveDir = Out1,
     MoveIndex = Out2.
-
 
 
 % Simulate all moves and create list with value
@@ -53,13 +50,13 @@ simMovesAux(PlayerTurn,ListMovesIn, Lin, Lout,Tab) :-
     endSim,
     simMovesAux(PlayerTurn,Rest, Aux, Lout,Tab).
 
-
-    
+ 
 % Equivalent to update, but works inside a simulation
 updateSim(PlayerTurn,'l',MoveIndex,Tab) :- playLeftSim(PlayerTurn,MoveIndex,Tab).
 updateSim(PlayerTurn,'r',MoveIndex,Tab) :- playRightSim(PlayerTurn,MoveIndex,Tab).
 updateSim(PlayerTurn,'u',MoveIndex,Tab) :- playUpSim(PlayerTurn,MoveIndex,Tab).
 updateSim(PlayerTurn,'d',MoveIndex,Tab) :- playDownSim(PlayerTurn,MoveIndex,Tab).
+
 
 % Gives a value to a board
 value(Board, player1, Value) :- 
@@ -75,6 +72,7 @@ value(Board, player2, Value) :-
     valueWhite(Lw,0,OutVal2),
     Value is OutVal1 - OutVal2.
 
+
 % Gets the best moves out of the possible moves list
 getBestMoves([], _, Aux, OutList, SizeAux, SizeOut) :- OutList = Aux, SizeOut = SizeAux.
 getBestMoves(List, CurrMax, Aux, OutList, SizeAux, SizeOut) :-
@@ -83,7 +81,6 @@ getBestMoves(List, CurrMax, Aux, OutList, SizeAux, SizeOut) :-
     format("H: ~w     RestAux: ~w", [H,RestAux]), nl,
     H = [NewMax|CoordsPair],
     format("Curr: ~w     Value: ~w     CoordsPair: ~w", [CurrMax,NewMax,CoordsPair]), nl,
-
     ifElse((NewMax > CurrMax), (NewAux = [CoordsPair],
                                 NewSize = 1,
                                 getBestMoves(RestAux, NewMax, NewAux, OutList, NewSize, SizeOut)),
@@ -92,12 +89,14 @@ getBestMoves(List, CurrMax, Aux, OutList, SizeAux, SizeOut) :-
                                             getBestMoves(RestAux, CurrMax, NewAux, OutList, NewSize, SizeOut)),
                                                     getBestMoves(RestAux, CurrMax, Aux, OutList, SizeAux, SizeOut)))).
     
+
 % Selects one move from the list of moves calculated by getBestMoves
 selAMove(BestMoves,SizeList,MoveDir,MoveIndex) :-
     random(0, SizeList, Index),
     iterateList(Index, BestMoves, Out1, Out2),
     MoveDir = Out1,
     MoveIndex = Out2.
+
 
 % Returns the MoveDir and MoveIndex of the move in position Index of the List
 iterateList(0, [H|Rest], MoveDir, MoveIndex) :-
@@ -123,6 +122,7 @@ valueWhite([H|Rest],AuxSum,OutVal) :-
     Aux = [Y|_],
     avaliate_w(X,Y,AuxSum,Out1),
     valueWhite(Rest,Out1,OutVal).
+
 
 % Avaliates a black piece and returns a value
 avaliate_b(X,Y,Aux1,OutVal) :-
@@ -153,6 +153,7 @@ avaliate_w(X,Y,Aux1,OutVal) :-
     avaliate_dia2_rev_w(X,Y,Lw,Lb,Aux8,Aux9),
     OutVal is Aux9.
 
+
 % Counts the number of pieces of a given color in a horizontal line
 countHor(Xmax,Y,L,OldN,NewN,Xmax) :- NewN = OldN.
 countHor(X,Y,L,OldN,NewN,Xmax) :-
@@ -182,6 +183,7 @@ countDia2(X,Y,L,OldN,NewN,Nmax) :-
     NewX is X+1,
     NewY is Y-1,
     countDia2(NewX,NewY,L,Aux,NewN,Nmax).
+
 
 % Avaliates a horizontal line for black pieces
 avaliate_hor_b(X,Y,Lw,Lb,Aux1,Aux2) :-

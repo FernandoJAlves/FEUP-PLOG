@@ -1,3 +1,4 @@
+% Calls the main menu
 mainMenu :-
     clearConsole,
 	write('================================='), nl,
@@ -14,6 +15,7 @@ mainMenu :-
     readChar(Input),
     menuOptions(Input).
 
+% Menu options logic
 menuOptions('1') :- gameModeMenu, mainMenu.
 menuOptions('2') :- gameTutorial,mainMenu.
 menuOptions('3') :- credits,mainMenu.
@@ -24,7 +26,7 @@ menuOptions(_) :-
     pressEnterToContinue, nl,
     mainMenu.
 
-
+% Calls the Gamemode Menu
 gameModeMenu :-
         clearConsole,
         write('================================='), nl,
@@ -41,6 +43,7 @@ gameModeMenu :-
         readChar(Input),
         gameModeOptions(Input).
 
+% Gamemode menu options
 gameModeOptions('1') :- startGame(pvp).
 gameModeOptions('2') :- botMenu,startGame(pvb).
 gameModeOptions('3') :- botMenu,startGame(bvb).
@@ -51,7 +54,7 @@ gameModeOptions(_) :-
     pressEnterToContinue, nl,
     gameModeMenu.
 
-
+% Calls the bot menu
 botMenu :-
     clearConsole,
     write('========================================'), nl,
@@ -66,6 +69,7 @@ botMenu :-
     readChar(Input),
     botOptions(Input). 
 
+% Bot menu options
 botOptions('1') :- deactivateBot,setBotInt(1).
 botOptions('2') :- deactivateBot,setBotInt(2).
 botOptions(_) :- 
@@ -73,7 +77,7 @@ botOptions(_) :-
     pressEnterToContinue, nl,
     botMenu.
 
-
+% Calls the game tutorial interface
 gameTutorial :-
     clearConsole,
 	write('==================================================================='), nl,
@@ -99,6 +103,7 @@ gameTutorial :-
 	write('==================================================================='), nl,
 	pressEnterToContinue, nl.
 
+% Calls the game credits interface
 credits :-
     clearConsole,
 	write('================================='), nl,
