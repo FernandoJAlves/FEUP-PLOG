@@ -6,61 +6,54 @@ setBotInt(Num):- assert(botInt(Num)).
 deactivateBot :- retractall(botInt(Num)).
 
 % Chooses a move for the bot to make
-choose_move(Tab, 1, MoveDir, MoveIndex) :-
+choose_move(Tab, 1, MoveDir, MoveIndex,PlayerTurn) :-
     valid_moves(Tab, PlayerTurn, ListOfMoves, ListSize),
     random(0,ListSize,Aux),
     iterateList(Aux, ListOfMoves, Out1, Out2),
     MoveDir = Out1,
     MoveIndex = Out2.
-choose_move(Tab, 2, MoveDir, MoveIndex) :-
+choose_move(Tab, 2, MoveDir, MoveIndex,PlayerTurn) :-
 
-    PlayerTurn = player2,
-
-    simAllMoves(PlayerTurn,Tab,Moves),
-
-    %%fazer cada jogada e avaliar o tabuleiro
-
+    valid_moves(Tab, PlayerTurn, ListOfMoves, ListSize),
+    format("ListOfMoves1: ~w", [ListOfMoves]),nl,
+    simAllMoves(PlayerTurn,Tab,ListOfMoves,Out1,Out2),
     MoveDir = Out1,
     MoveIndex = Out2.
 
 
 % Simulates all moves for a level 2 bot
-simAllMoves(PlayerTurn,Tab,Moves) :- 
-    currentPieces(Tab,Pieces),
-    getYcoords(Pieces, Aux1, OutList1),
-    getMinList(OutList1, MinY),
-    getMaxList(OutList1, MaxY),
-
-    getXcoords(Pieces, Aux2, OutList2),
-    getMinList(OutList2, MinX),
-    getMaxList(OutList2, MaxX),
-
-    format("MinY: ~w   MaxY: ~w   MinX: ~w    MaxX: ~w", [MinY, MaxY,MinX,MaxX]), nl,
-    % Ver aqui
-    NewMaxY is MaxY+1,
-    NewMaxX is MaxX+1,
-
-    simMovesUp(PlayerTurn,MinX,NewMaxX,Lin,Lout,Tab),
+simAllMoves(PlayerTurn,Tab,ListOfMoves,MoveDir,MoveIndex) :- 
+    
+    simMovesAux(PlayerTurn,ListOfMoves, [], Lout,Tab),
 
     format("Lout: ~w" ,[Lout]), nl,
-    getBestMoves(Lout, 0, [], OutList, 0, SizeOut),
-    selAMove(OutList,SizeOut,MoveDir,MoveIndex).
+    getBestMoves(Lout, -1000000, [], OutList, 0, SizeOut),
+    format("OutList: ~w", [OutList]), nl,
+    selAMove(OutList,SizeOut,Out1,Out2),
+    MoveDir = Out1,
+    MoveIndex = Out2.
 
-% Simulate all moves from up
-simMovesUp(PlayerTurn,MaxY, MaxY, Lin, Lout,Tab) :- Lout = Lin.
-simMovesUp(PlayerTurn,MinY, MaxY, Lin, Lout,Tab) :- 
+
+
+% Simulate all moves and create list with value
+simMovesAux(PlayerTurn,[], Lin, Lout,Tab) :- Lout = Lin.
+simMovesAux(PlayerTurn,ListMovesIn, Lin, Lout,Tab) :- 
     startSim,
-    b_piecesSim(ListTb),
-    format("ListTb: ~w", [ListTb]), nl,
-    updateSim(PlayerTurn,'u',MinY,Tab),
-    b_piecesSim(ListTb2),
-    format("ListTb2: ~w", [ListTb2]), nl,
+    ListMovesIn = [Pair|Rest],
+    Pair = [Dir|Temp],
+    Temp = [Index|_],
+    %b_piecesSim(ListTb),
+    %format("ListTb: ~w", [ListTb]), nl,
+    updateSim(PlayerTurn,Dir,Index,Tab),
+    %b_piecesSim(ListTb2),
+    %format("ListTb2: ~w", [ListTb2]), nl,
     value(_,PlayerTurn,Value),
     format("Value: ~w",[Value]), nl,
-    append(Lin, [[Value, 'u', MinY]], Aux),
-    NewMin is MinY+1,
+    append(Lin, [[Value, Dir, Index]], Aux),
     endSim,
-    simMovesUp(PlayerTurn,NewMin, MaxY, Aux, Lout,Tab).
+    simMovesAux(PlayerTurn,Rest, Aux, Lout,Tab).
+
+
     
 % Equivalent to update, but works inside a simulation
 updateSim(PlayerTurn,'l',MoveIndex,Tab) :- playLeftSim(PlayerTurn,MoveIndex,Tab).
@@ -89,7 +82,7 @@ getBestMoves(List, CurrMax, Aux, OutList, SizeAux, SizeOut) :-
     List = [H|RestAux],
     format("H: ~w     RestAux: ~w", [H,RestAux]), nl,
     H = [NewMax|CoordsPair],
-    format("NewMax: ~w     CoordsPair: ~w", [NewMax,CoordsPair]), nl,
+    format("Curr: ~w     Value: ~w     CoordsPair: ~w", [CurrMax,NewMax,CoordsPair]), nl,
 
     ifElse((NewMax > CurrMax), (NewAux = [CoordsPair],
                                 NewSize = 1,
