@@ -79,10 +79,10 @@ scoreLine(_,1,OutValue) :- OutValue is 0.
 scoreLine(_,2,OutValue) :- OutValue is 0.
 scoreLine(_,3,OutValue) :- OutValue is 0.
 scoreLine(_,4,OutValue) :- OutValue is 0.
-scoreLine(1,0,OutValue) :- OutValue is 1.
-scoreLine(2,0,OutValue) :- OutValue is 10.
+scoreLine(1,0,OutValue) :- OutValue is 0.
+scoreLine(2,0,OutValue) :- OutValue is 0.
 scoreLine(3,0,OutValue) :- OutValue is 50.
-scoreLine(4,0,OutValue) :- OutValue is 100.
+scoreLine(4,0,OutValue) :- OutValue is 500.
 scoreLine(5,0,OutValue) :- OutValue is 10000.
 
 ifElse(C,G,E) :- C, !, G.
@@ -133,6 +133,6 @@ char_index('P',16).
 char_index('Q',17).
 char_index('R',18).
 char_index('S',19).
-char_index(_,_) :- write('Invalid Input: you can only choose a letter between A and S.'),nl,fail.
+char_index(_,_) :- !,write('Invalid Input: you can only choose a letter between A and S.'),nl,fail.
 
         

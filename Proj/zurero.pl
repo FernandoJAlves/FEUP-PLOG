@@ -56,17 +56,20 @@ gameLoop(bvb,PlayerTurn,Tab) :-
 
 
 playHuman(PlayerTurn,Direction,Tab,NewTab) :-
-    
-    repeat,
+    (repeat,
         playerMessage(PlayerTurn),nl,
         valid_moves(Board, Player, ListOfMoves, ListSize),
         format("List: ~w",[ListOfMoves]), nl,
         write('Write your command: '),
         readPlay(Chars),
         Chars = [DirectionCode|Aux],
-        char_code(Direction, DirectionCode),
-        ifElse(interpret(Direction,Aux,Num),move([PlayerTurn,Direction,Num],Tab,NewTab),format("TODO",[])).
+        char_code(Direction, DirectionCode),!,
+        interpret(Direction,Aux,Num),!,
+        checkMove(Direction,Num,ListOfMoves)),
+        move([PlayerTurn,Direction,Num],Tab,NewTab).
         
+checkMove('q',Num,ListOfMoves):- true.
+checkMove(Direction,Num,ListOfMoves):- member([Direction,Num],ListOfMoves);fail.
 
 playBot(PlayerTurn,1,Direction,Tab,NewTab):-
     choose_move(Tab,1, MoveDir, MoveIndex,PlayerTurn),
