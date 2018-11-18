@@ -37,11 +37,12 @@ simAllMoves(PlayerTurn,Tab,Moves) :-
     getMaxList(OutList2, MaxX),
 
     % Ver aqui
-    NewMinY is 20-MaxY,
-    NewMaxY is 21-MaxY,
+    NewMaxY is MaxY+1,
     NewMaxX is MaxX+1,
 
-    simMovesUp(PlayerTurn,NewMinY,NewMaxY,Lin,Lout,Tab).
+    simMovesUp(PlayerTurn,MinY,NewMaxY,Lin,Lout,Tab),
+
+    format("Lout: ~w" ,[Lout]).
 
 simMovesUp(PlayerTurn,MaxY, MaxY, Lin, Lout,Tab) :- Lout = Lin.
 simMovesUp(PlayerTurn,MinY, MaxY, Lin, Lout,Tab) :- 
@@ -50,7 +51,7 @@ simMovesUp(PlayerTurn,MinY, MaxY, Lin, Lout,Tab) :-
     value(_,PlayerTurn,Value),
     append(Lin, [[Value, 'u', MinY]], Aux),
     NewMin is MinY+1,
-    format("Value: ~w", [Value]), nl,
+    format("Value: ~w", [Value]),nl,
     endSim,
     simMovesUp(PlayerTurn,NewMin, MaxY, Aux, Lout,Tab).
     
@@ -125,7 +126,11 @@ avaliate_b(X,Y,Aux1,OutVal) :-
     avaliate_vert_b(X,Y,Lw,Lb,Aux2,Aux3),
     avaliate_dia1_b(X,Y,Lw,Lb,Aux3,Aux4),
     avaliate_dia2_b(X,Y,Lw,Lb,Aux4,Aux5),
-    OutVal is Aux5.
+    avaliate_hor_rev_b(X,Y,Lw,Lb,Aux5,Aux6),
+    avaliate_vert_rev_b(X,Y,Lw,Lb,Aux6,Aux7),
+    avaliate_dia1_rev_b(X,Y,Lw,Lb,Aux7,Aux8),
+    avaliate_dia2_rev_b(X,Y,Lw,Lb,Aux8,Aux9),
+    OutVal is Aux9.
 
 avaliate_w(X,Y,Aux1,OutVal) :-
     b_piecesSim(Lb),
@@ -134,7 +139,11 @@ avaliate_w(X,Y,Aux1,OutVal) :-
     avaliate_vert_w(X,Y,Lw,Lb,Aux2,Aux3),
     avaliate_dia1_w(X,Y,Lw,Lb,Aux3,Aux4),
     avaliate_dia2_w(X,Y,Lw,Lb,Aux4,Aux5),
-    OutVal is Aux5.
+    avaliate_hor_rev_w(X,Y,Lw,Lb,Aux5,Aux6),
+    avaliate_vert_rev_w(X,Y,Lw,Lb,Aux6,Aux7),
+    avaliate_dia1_rev_w(X,Y,Lw,Lb,Aux7,Aux8),
+    avaliate_dia2_rev_w(X,Y,Lw,Lb,Aux8,Aux9),
+    OutVal is Aux9.
 
 
 
@@ -173,6 +182,16 @@ avaliate_hor_b(X,Y,Lw,Lb,Aux1,Aux2) :-
     countHor(X,Y,Lb,OldNb,NewNb,Xmax),
     scoreLine(NewNb,NewNw,Aval),
     Aux2 is Aux1 + Aval.
+
+avaliate_hor_rev_b(X,Y,Lw,Lb,Aux1,Aux2) :-
+    Xmin is X-4,
+    Xmax is X+1,
+    OldNb is 0,
+    OldNw is 0,
+    countHor(Xmin,Y,Lw,OldNw,NewNw,Xmax),
+    countHor(Xmin,Y,Lb,OldNb,NewNb,Xmax),
+    scoreLine(NewNb,NewNw,Aval),
+    Aux2 is Aux1 + Aval.    
     
 
 avaliate_hor_w(X,Y,Lw,Lb,Aux1,Aux2) :-
@@ -184,6 +203,16 @@ avaliate_hor_w(X,Y,Lw,Lb,Aux1,Aux2) :-
     scoreLine(NewNw,NewNb,Aval),
     Aux2 is Aux1 + Aval.
 
+avaliate_hor_rev_w(X,Y,Lw,Lb,Aux1,Aux2) :-
+    Xmin is X-4,
+    Xmax is X+1,
+    OldNb is 0,
+    OldNw is 0,
+    countHor(Xmin,Y,Lw,OldNw,NewNw,Xmax),
+    countHor(Xmin,Y,Lb,OldNb,NewNb,Xmax),
+    scoreLine(NewNw,NewNb,Aval),
+    Aux2 is Aux1 + Aval.        
+
 avaliate_vert_b(X,Y,Lw,Lb,Aux1,Aux2) :-
     Ymax is Y+5,
     OldNb is 0,
@@ -192,6 +221,16 @@ avaliate_vert_b(X,Y,Lw,Lb,Aux1,Aux2) :-
     countVert(X,Y,Lb,OldNb,NewNb,Ymax),
     scoreLine(NewNb,NewNw,Aval),
     Aux2 is Aux1 + Aval.
+
+avaliate_vert_rev_b(X,Y,Lw,Lb,Aux1,Aux2) :-
+    Ymax is Y+1,
+    Ymin is Y-4,
+    OldNb is 0,
+    OldNw is 0,
+    countVert(X,Ymin,Lw,OldNw,NewNw,Ymax),
+    countVert(X,Ymin,Lb,OldNb,NewNb,Ymax),
+    scoreLine(NewNb,NewNw,Aval),
+    Aux2 is Aux1 + Aval.    
 
 avaliate_vert_w(X,Y,Lw,Lb,Aux1,Aux2) :-
     Ymax is Y+5,
@@ -202,6 +241,16 @@ avaliate_vert_w(X,Y,Lw,Lb,Aux1,Aux2) :-
     scoreLine(NewNw,NewNb,Aval),
     Aux2 is Aux1 + Aval.
 
+avaliate_vert_rev_w(X,Y,Lw,Lb,Aux1,Aux2) :-
+    Ymax is Y+1,
+    Ymin is Y-4,
+    OldNb is 0,
+    OldNw is 0,
+    countVert(X,Ymin,Lw,OldNw,NewNw,Ymax),
+    countVert(X,Ymin,Lb,OldNb,NewNb,Ymax),
+    scoreLine(NewNw,NewNb,Aval),
+    Aux2 is Aux1 + Aval.    
+
 avaliate_dia1_b(X,Y,Lw,Lb,Aux1,Aux2) :-
     Nmax is X+5,
     OldNb is 0,
@@ -210,6 +259,17 @@ avaliate_dia1_b(X,Y,Lw,Lb,Aux1,Aux2) :-
     countDia1(X,Y,Lb,OldNb,NewNb,Nmax),
     scoreLine(NewNb,NewNw,Aval),
     Aux2 is Aux1 + Aval.
+
+avaliate_dia1_rev_b(X,Y,Lw,Lb,Aux1,Aux2) :-
+    Nmax is X+1,
+    Xmin is X-4,
+    Ymin is Y-4,
+    OldNb is 0,
+    OldNw is 0,
+    countDia1(Xmin,Ymin,Lw,OldNw,NewNw,Nmax),
+    countDia1(Xmin,Ymin,Lb,OldNb,NewNb,Nmax),
+    scoreLine(NewNb,NewNw,Aval),
+    Aux2 is Aux1 + Aval.    
 
 avaliate_dia1_w(X,Y,Lw,Lb,Aux1,Aux2) :-
     Nmax is X+5,
@@ -220,6 +280,18 @@ avaliate_dia1_w(X,Y,Lw,Lb,Aux1,Aux2) :-
     scoreLine(NewNw,NewNb,Aval),
     Aux2 is Aux1 + Aval.
 
+avaliate_dia1_rev_w(X,Y,Lw,Lb,Aux1,Aux2) :-
+    Nmax is X+1,
+    Xmin is X-4,
+    Ymin is Y-4,
+    OldNb is 0,
+    OldNw is 0,
+    countDia1(Xmin,Ymin,Lw,OldNw,NewNw,Nmax),
+    countDia1(Xmin,Ymin,Lb,OldNb,NewNb,Nmax),
+    scoreLine(NewNw,NewNb,Aval),
+    Aux2 is Aux1 + Aval.    
+
+
 avaliate_dia2_b(X,Y,Lw,Lb,Aux1,Aux2) :-
     Nmax is X+5,
     OldNb is 0,
@@ -229,11 +301,33 @@ avaliate_dia2_b(X,Y,Lw,Lb,Aux1,Aux2) :-
     scoreLine(NewNb,NewNw,Aval),
     Aux2 is Aux1 + Aval.
 
+avaliate_dia2_rev_b(X,Y,Lw,Lb,Aux1,Aux2) :-
+    Nmax is X+1,
+    Xmin is X-4,
+    Ymin is Y+4,
+    OldNb is 0,
+    OldNw is 0,
+    countDia2(Xmin,Ymin,Lw,OldNw,NewNw,Nmax),
+    countDia2(Xmin,Ymin,Lb,OldNb,NewNb,Nmax),
+    scoreLine(NewNb,NewNw,Aval),
+    Aux2 is Aux1 + Aval.
+
 avaliate_dia2_w(X,Y,Lw,Lb,Aux1,Aux2) :-
     Nmax is X+5,
     OldNb is 0,
     OldNw is 0,
     countDia2(X,Y,Lw,OldNw,NewNw,Nmax),
     countDia2(X,Y,Lb,OldNb,NewNb,Nmax),
+    scoreLine(NewNw,NewNb,Aval),
+    Aux2 is Aux1 + Aval.
+
+avaliate_dia2_rev_w(X,Y,Lw,Lb,Aux1,Aux2) :-
+    Nmax is X+1,
+    Xmin is X-4,
+    Ymin is Y+4,
+    OldNb is 0,
+    OldNw is 0,
+    countDia2(Xmin,Ymin,Lw,OldNw,NewNw,Nmax),
+    countDia2(Xmin,Ymin,Lb,OldNb,NewNb,Nmax),
     scoreLine(NewNw,NewNb,Aval),
     Aux2 is Aux1 + Aval.
