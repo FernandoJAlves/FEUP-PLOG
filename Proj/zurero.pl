@@ -78,15 +78,15 @@ checkMove(Direction,Num,ListOfMoves):- member([Direction,Num],ListOfMoves);fail.
 
 % For computer to do its play when level of intelligence is 1
 playBot(PlayerTurn,1,Direction,Tab,NewTab):-
-    choose_move(Tab,1, MoveDir, MoveIndex,PlayerTurn),
+    choose_move(Tab,1, PlayerTurn,Move),
     format("Simulated Move: ~w~w", [MoveDir, MoveIndex]), nl,
-    move([PlayerTurn,MoveDir,MoveIndex],Tab,NewTab).
+    move(Move,Tab,NewTab).
 
 % For computer to do its play when level of intelligence is 2
 playBot(PlayerTurn,2,Direction,Tab,NewTab):-
-    choose_move(Tab,2, MoveDir, MoveIndex,PlayerTurn),
+    choose_move(Tab,2, PlayerTurn, Move),
     format("Simulated Move: ~w~w", [MoveDir, MoveIndex]), nl,
-    move([PlayerTurn,MoveDir,MoveIndex],Tab,NewTab).
+    move(Move,Tab,NewTab).
 
 % Gets the range of columns possible
 getXcoords([], Xvalues, FinalList) :- FinalList = Xvalues.

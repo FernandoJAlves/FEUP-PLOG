@@ -7,19 +7,17 @@ deactivateBot :- retractall(botInt(Num)).
 
 
 % Chooses a move for the bot to make
-choose_move(Tab, 1, MoveDir, MoveIndex,PlayerTurn) :-
-    valid_moves(Tab, PlayerTurn, ListOfMoves),
+choose_move(Board, 1, PlayerTurn,Move) :-
+    valid_moves(Board, PlayerTurn, ListOfMoves),
     length(ListOfMoves,ListSize),
     random(0,ListSize,Aux),
     iterateList(Aux, ListOfMoves, Out1, Out2),
-    MoveDir = Out1,
-    MoveIndex = Out2.
-choose_move(Tab, 2, MoveDir, MoveIndex,PlayerTurn) :-
-    valid_moves(Tab, PlayerTurn, ListOfMoves),
+    Move = [PlayerTurn,Out1,Out2].
+choose_move(Board, 2, PlayerTurn,Move) :-
+    valid_moves(Board, PlayerTurn, ListOfMoves),
     format("ListOfMoves1: ~w", [ListOfMoves]),nl,
-    simAllMoves(PlayerTurn,Tab,ListOfMoves,Out1,Out2),
-    MoveDir = Out1,
-    MoveIndex = Out2.
+    simAllMoves(PlayerTurn,Board,ListOfMoves,Out1,Out2),
+    Move = [PlayerTurn,Out1,Out2].
 
 
 % Simulates all moves for a level 2 bot
