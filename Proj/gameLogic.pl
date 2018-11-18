@@ -100,13 +100,13 @@ slideStoneFromRight(PlayerTurn,Index,I2,Linha,Tab,Stone,NewTab) :-
     Num2 is I2+1,
     nth1(Num1,Linha,Elem),
     getPlayerSymbol(PlayerTurn,Symbol),
-    (
-        Elem \= emptySpace -> setPeca(Index,Num2,Symbol,Tab,NewTab),storeCell(Symbol,Index,Num2);
-        setPeca(Index,I2,Symbol,Tab,Tab1),
+    ifElse(
+        (Elem \= emptySpace), (setPeca(Index,Num2,Symbol,Tab,NewTab),storeCell(Symbol,Index,Num2)),
+        (setPeca(Index,I2,Symbol,Tab,Tab1),
         setPeca(Index,Num1,Stone,Tab1,NewTab),
         rmCell(Stone,Index,I2),
         storeCell(Symbol,Index,I2),
-        storeCell(Stone,Index,Num1)
+        storeCell(Stone,Index,Num1))
 ).
 
 
@@ -115,13 +115,13 @@ slideStoneFromUp(PlayerTurn,I2,Index,Stone,Tab,NewTab) :-
     Num2 is I2-1,
     getPeca(Num1,Index,Tab,NextElem),
     getPlayerSymbol(PlayerTurn,Symbol),
-    (
-        NextElem \= emptySpace -> setPeca(Num2,Index,Symbol,Tab,NewTab),storeCell(Symbol,Num2,Index);
-        setPeca(I2,Index,Symbol,Tab,Tab1),
+    ifElse(
+        (NextElem \= emptySpace),(setPeca(Num2,Index,Symbol,Tab,NewTab),storeCell(Symbol,Num2,Index)),
+        (setPeca(I2,Index,Symbol,Tab,Tab1),
         setPeca(Num1,Index,Stone,Tab1,NewTab),
         rmCell(Stone,I2,Index),
         storeCell(Symbol,I2,Index),
-        storeCell(Stone,Num1,Index)
+        storeCell(Stone,Num1,Index))
 ).
 
 slideStoneFromDown(PlayerTurn,I2,Index,Stone,Tab,NewTab) :-
@@ -129,13 +129,13 @@ slideStoneFromDown(PlayerTurn,I2,Index,Stone,Tab,NewTab) :-
     Num2 is I2+1,
     getPeca(Num1,Index,Tab,NextElem),
     getPlayerSymbol(PlayerTurn,Symbol),
-    (
-        NextElem \= emptySpace -> setPeca(Num2,Index,Symbol,Tab,NewTab),storeCell(Symbol,Num2,Index);
-        setPeca(I2,Index,Symbol,Tab,Tab1),
+    ifElse(
+        (NextElem \= emptySpace), (setPeca(Num2,Index,Symbol,Tab,NewTab),storeCell(Symbol,Num2,Index)),
+        (setPeca(I2,Index,Symbol,Tab,Tab1),
         setPeca(Num1,Index,Stone,Tab1,NewTab),
         rmCell(Stone,I2,Index),
         storeCell(Symbol,I2,Index),
-        storeCell(Stone,Num1,Index)
+        storeCell(Stone,Num1,Index))
 ).
 
 
@@ -146,12 +146,11 @@ slideStoneFromLeftSim(PlayerTurn,Index,I2,Linha,Tab,Stone) :-
     Num2 is I2-1,
     nth1(Num1,Linha,Elem),
     getPlayerSymbol(PlayerTurn,Symbol),
-    (
-        Elem \= emptySpace -> storeSim(Symbol,Index,Num2);
-
-        rmSim(Stone,Index,I2),
+    ifElse(
+        (Elem \= emptySpace),storeSim(Symbol,Index,Num2),
+        (rmSim(Stone,Index,I2),
         storeSim(Symbol,Index,I2),
-        storeSim(Stone,Index,Num1)
+        storeSim(Stone,Index,Num1))
 ).
 
 slideStoneFromRightSim(PlayerTurn,Index,I2,Linha,Tab,Stone) :-
@@ -159,12 +158,11 @@ slideStoneFromRightSim(PlayerTurn,Index,I2,Linha,Tab,Stone) :-
     Num2 is I2+1,
     nth1(Num1,Linha,Elem),
     getPlayerSymbol(PlayerTurn,Symbol),
-    (
-        Elem \= emptySpace -> storeSim(Symbol,Index,Num2);
-
-        rmSim(Stone,Index,I2),
+    ifElse(
+        (Elem \= emptySpace),storeSim(Symbol,Index,Num2),
+        (rmSim(Stone,Index,I2),
         storeSim(Symbol,Index,I2),
-        storeSim(Stone,Index,Num1)
+        storeSim(Stone,Index,Num1))
 ).
 
 slideStoneFromUpSim(PlayerTurn,I2,Index,Stone,Tab) :-
@@ -172,11 +170,11 @@ slideStoneFromUpSim(PlayerTurn,I2,Index,Stone,Tab) :-
     Num2 is I2-1,
     getPeca(Num1,Index,Tab,NextElem),
     getPlayerSymbol(PlayerTurn,Symbol),
-    (
-        NextElem \= emptySpace -> storeSim(Symbol,Num2,Index);
-        rmSim(Stone,I2,Index),
+    ifElse(
+        (NextElem \= emptySpace), storeSim(Symbol,Num2,Index),
+        (rmSim(Stone,I2,Index),
         storeSim(Symbol,I2,Index),
-        storeSim(Stone,Num1,Index)
+        storeSim(Stone,Num1,Index))
 ).
 
 slideStoneFromDownSim(PlayerTurn,I2,Index,Stone,Tab) :-
@@ -184,11 +182,11 @@ slideStoneFromDownSim(PlayerTurn,I2,Index,Stone,Tab) :-
     Num2 is I2+1,
     getPeca(Num1,Index,Tab,NextElem),
     getPlayerSymbol(PlayerTurn,Symbol),
-    (
-        NextElem \= emptySpace -> storeSim(Symbol,Num2,Index);
-        rmSim(Stone,I2,Index),
+    ifElse(
+        (NextElem \= emptySpace), storeSim(Symbol,Num2,Index),
+        (rmSim(Stone,I2,Index),
         storeSim(Symbol,I2,Index),
-        storeSim(Stone,Num1,Index)
+        storeSim(Stone,Num1,Index))
 ).
 
 
