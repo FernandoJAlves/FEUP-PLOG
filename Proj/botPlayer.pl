@@ -42,7 +42,9 @@ simAllMoves(PlayerTurn,Tab,Moves) :-
 
     simMovesUp(PlayerTurn,MinY,NewMaxY,Lin,Lout,Tab),
 
-    format("Lout: ~w" ,[Lout]).
+    format("Lout: ~w" ,[Lout]), nl,
+    getBestMoves(Lout, 0, [], OutList, 0, SizeOut),
+    selAMove(OutList,SizeOut,MoveDir,MoveIndex).
 
 simMovesUp(PlayerTurn,MaxY, MaxY, Lin, Lout,Tab) :- Lout = Lin.
 simMovesUp(PlayerTurn,MinY, MaxY, Lin, Lout,Tab) :- 
@@ -82,8 +84,22 @@ value(Board, player2, Value) :-
 
 
 getBestMoves([], _, Aux, OutList, SizeAux, SizeOut) :- OutList = Aux, SizeOut = SizeAux.
-getBestMoves(List, CurrMax, Aux, OutList, SizeAux, SizeOut) :- fail.
+getBestMoves(List, CurrMax, Aux, OutList, SizeAux, SizeOut) :-
     % OutList format will be [MoveDir, MoveIndex]
+    List = [H|RestAux],
+    format("H: ~w     RestAux: ~w", [H,RestAux]), nl,
+    H = [NewMax|CoordsPair],
+    format("NewMax: ~w     CoordsPair: ~w", [NewMax,CoordsPair]), nl,
+
+    ifElse((NewMax > CurrMax), (NewAux = [CoordsPair],
+                                NewSize = 1,
+                                getBestMoves(RestAux, NewMax, NewAux, OutList, NewSize, SizeOut)),
+                (ifElse(NewMax == CurrMax, (append(Aux, [CoordsPair], NewAux),
+                                            NewSize is SizeAux+1,
+                                            getBestMoves(RestAux, CurrMax, NewAux, OutList, NewSize, SizeOut)),
+                                                    getBestMoves(RestAux, CurrMax, Aux, OutList, SizeAux, SizeOut)))).
+    
+    
     % Usar o if else das aulas
     % if List.head.head > CurrMax, clear Aux, SizeAux = 0, append [MoveDir, MoveIndex], getBestMoves(Tail, List.head, NewAux, OutList)
     % else if List.head.head == CurrMax (permitir multiplas jogadas, depois escolhe 1 random dessas), append [MoveDir, MoveIndex], SizeAux++ ,getBestMoves(Tail, CurrMax, NewAux, OutList)
