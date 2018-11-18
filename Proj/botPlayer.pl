@@ -7,9 +7,10 @@ deactivateBot :- retractall(botInt(Num)).
 
 % Chooses a move for the bot to make
 choose_move(Tab, 1, MoveDir, MoveIndex) :-
-    currentPieces(Tab,Pieces),
-    random(0,4,Aux),
-    choose_move_dir(Pieces, Aux, Out1, Out2),
+    valid_moves(Tab, PlayerTurn, ListOfMoves, ListSize),
+    AuxSize is ListSize+1,
+    random(0,AuxSize,Aux),
+    iterateList(Aux, ListOfMoves, Out1, Out2),
     MoveDir = Out1,
     MoveIndex = Out2.
 choose_move(Tab, 2, MoveDir, MoveIndex) :-
@@ -40,7 +41,7 @@ simAllMoves(PlayerTurn,Tab,Moves) :-
     NewMaxY is MaxY+1,
     NewMaxX is MaxX+1,
 
-    simMovesUp(PlayerTurn,MinY,NewMaxY,Lin,Lout,Tab),
+    simMovesUp(PlayerTurn,MinX,NewMaxX,Lin,Lout,Tab),
 
     format("Lout: ~w" ,[Lout]), nl,
     getBestMoves(Lout, 0, [], OutList, 0, SizeOut),
