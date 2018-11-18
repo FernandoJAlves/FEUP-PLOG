@@ -43,39 +43,38 @@ setPeca(Linha):-
 playLeft(PlayerTurn,I,Tab,NewTab) :-
     Index is 20-I,
     nth1(Index,Tab,Linha),
-    ((nth1(I2,Linha,Elem),Elem \= emptySpace,!) -> slideStoneFromLeft(PlayerTurn,Index,I2,Linha,Tab,Elem,NewTab)).
+    ifElse((nth1(I2,Linha,Elem),Elem \= emptySpace,!),slideStoneFromLeft(PlayerTurn,Index,I2,Linha,Tab,Elem,NewTab),true).
 
 playRight(PlayerTurn,I,Tab,NewTab) :-
     Index is 20-I,
     nth1(Index,Tab,Linha),
     reverse(Linha,Temp),
-    ((nth1(Aux,Temp,Elem),Elem \= emptySpace,!) -> I2 is 20-Aux,slideStoneFromRight(PlayerTurn,Index,I2,Linha,Tab,Elem,NewTab)).
+    ifElse((nth1(Aux,Temp,Elem),Elem \= emptySpace,!),(I2 is 20-Aux,slideStoneFromRight(PlayerTurn,Index,I2,Linha,Tab,Elem,NewTab)),true).
 
 playUp(PlayerTurn,Index,Tab,NewTab) :-
-    ((getPeca(I2,Index,Tab,Elem),Elem \= emptySpace,!) -> slideStoneFromUp(PlayerTurn,I2,Index,Elem,Tab,NewTab)).
+    ifElse((getPeca(I2,Index,Tab,Elem),Elem \= emptySpace,!),slideStoneFromUp(PlayerTurn,I2,Index,Elem,Tab,NewTab),true).
 
 playDown(PlayerTurn,Index,Tab,NewTab) :-
     reverse(Tab,Temp),
-    ((getPeca(Aux,Index,Temp,Elem),Elem \= emptySpace,!) -> I2 is 20-Aux,slideStoneFromDown(PlayerTurn,I2,Index,Elem,Tab,NewTab)).
-
+    ifElse((getPeca(Aux,Index,Temp,Elem),Elem \= emptySpace,!),(I2 is 20-Aux,slideStoneFromDown(PlayerTurn,I2,Index,Elem,Tab,NewTab)),true).
 
 playLeftSim(PlayerTurn,I,Tab) :-
     Index is 20-I,
     nth1(Index,Tab,Linha),
-    ((nth1(I2,Linha,Elem),Elem \= emptySpace,!) -> slideStoneFromLeftSim(PlayerTurn,Index,I2,Linha,Tab,Elem)).
+    ifElse((nth1(I2,Linha,Elem),Elem \= emptySpace,!),slideStoneFromLeftSim(PlayerTurn,Index,I2,Linha,Tab,Elem),true).
 
 playRightSim(PlayerTurn,I,Tab) :-
     Index is 20-I,
     nth1(Index,Tab,Linha),
     reverse(Linha,Temp),
-    ((nth1(Aux,Temp,Elem),Elem \= emptySpace,!) -> I2 is 20-Aux,slideStoneFromRightSim(PlayerTurn,Index,I2,Linha,Tab,Elem)).
+    ifElse((nth1(Aux,Temp,Elem),Elem \= emptySpace,!),(I2 is 20-Aux,slideStoneFromRightSim(PlayerTurn,Index,I2,Linha,Tab,Elem)),true).
 
 playUpSim(PlayerTurn,Index,Tab) :-
-    ((getPeca(I2,Index,Tab,Elem),Elem \= emptySpace,!) -> slideStoneFromUpSim(PlayerTurn,I2,Index,Elem,Tab)).
+    ifElse((getPeca(I2,Index,Tab,Elem),Elem \= emptySpace,!),slideStoneFromUpSim(PlayerTurn,I2,Index,Elem,Tab),true).
 
 playDownSim(PlayerTurn,Index,Tab) :-
     reverse(Tab,Temp),
-    ((getPeca(Aux,Index,Temp,Elem),Elem \= emptySpace,!) -> I2 is 20-Aux,slideStoneFromDownSim(PlayerTurn,I2,Index,Elem,Tab)).
+    ifElse((getPeca(Aux,Index,Temp,Elem),Elem \= emptySpace,!),(I2 is 20-Aux,slideStoneFromDownSim(PlayerTurn,I2,Index,Elem,Tab)),true).
 
 
 
@@ -86,13 +85,13 @@ slideStoneFromLeft(PlayerTurn,Index,I2,Linha,Tab,Stone,NewTab) :-
     Num2 is I2-1,
     nth1(Num1,Linha,Elem),
     getPlayerSymbol(PlayerTurn,Symbol),
-    (
-        Elem \= emptySpace -> setPeca(Index,Num2,Symbol,Tab,NewTab),storeCell(Symbol,Index,Num2);
-        setPeca(Index,I2,Symbol,Tab,Tab1),
+    ifElse(
+        (Elem \= emptySpace), (setPeca(Index,Num2,Symbol,Tab,NewTab),storeCell(Symbol,Index,Num2)),
+        (setPeca(Index,I2,Symbol,Tab,Tab1),
         setPeca(Index,Num1,Stone,Tab1,NewTab),
         rmCell(Stone,Index,I2),
         storeCell(Symbol,Index,I2),
-        storeCell(Stone,Index,Num1)
+        storeCell(Stone,Index,Num1))
 ).
 
 
@@ -138,7 +137,6 @@ slideStoneFromDown(PlayerTurn,I2,Index,Stone,Tab,NewTab) :-
         storeCell(Symbol,I2,Index),
         storeCell(Stone,Num1,Index)
 ).
-
 
 
 

@@ -63,25 +63,22 @@ playHuman(PlayerTurn,Direction,Tab,NewTab) :-
         readPlay(Chars),
         Chars = [DirectionCode|Aux],
         char_code(Direction, DirectionCode),
-        (Direction == 'q' -> true;
         interpret(Direction,Aux,Num),!,
-        update(PlayerTurn,Direction,Num,Tab,NewTab)).
+        move([PlayerTurn,Direction,Num],Tab,NewTab).
 
 playBot(PlayerTurn,1,Direction,Tab,NewTab):-
-    Direction == 'q' -> true, !;
     choose_move(Tab,1, MoveDir, MoveIndex),
     format("Simulated Move: ~w~w", [MoveDir, MoveIndex]), nl,
-    update(PlayerTurn,MoveDir,MoveIndex,Tab,NewTab).
+    move([PlayerTurn,MoveDir,MoveIndex],Tab,NewTab).
     %%format("After update", []), nl.
     %%display_game(NewTab).
 
 
 playBot(PlayerTurn,2,Direction,Tab,NewTab):-
-    Direction == 'q' -> true, !;
-
     choose_move(Tab,2, MoveDir, MoveIndex),
     format("Simulated Move: ~w~w", [MoveDir, MoveIndex]), nl,
-    update(PlayerTurn,MoveDir,MoveIndex,Tab,NewTab).
+    move([PlayerTurn,MoveDir,MoveIndex],Tab,NewTab).
+
 
 
 %%move cima    
@@ -165,18 +162,14 @@ playerMessage(player2):- write('Player 2 Turn. You are the black stones').
 
 interpretAux(X,Num):-
     length(X,L),
-    (
-        L < 1 -> write('You have to select one position between 1 and 19'),nl,fail;
-        true
-    ),
-    
+    checkLength(L),
     checkCharList(X),
     number_codes(N,X),
     Num is N,
-    (
-        N > 19 -> write('Invalid Input: You have to select one position between 1 and 19'),nl,fail;
-        true
-        ).
+    ifElse(N > 10,(write('Invalid Input: You have to select one position between 1 and 19'),nl,fail),true).
+
+checkLength(0) :- write('You have to select one position between 1 and 19'),nl,fail.
+checkLength(_).
     
 
 
@@ -187,7 +180,11 @@ update(PlayerTurn,'d',Coord,Tab,NewTab):- playDown(PlayerTurn,Coord,Tab,NewTab).
 update(PlayerTurn,'q',Coord,Tab,NewTab):- true.
 update(PlayerTurn,_,Coord,Tab,NewTab):- write('Invalid Direction. You can only choose u(up), d(down), l(left) or r(right).'),nl,fail.
 
-
+move(Move,Board,NewBoard):- 
+    Move = [PlayerTurn|Rest],
+    Rest = [Direction|Aux],
+    Aux = [Coord|_],
+    update(PlayerTurn,Direction,Coord,Board,NewBoard).
 
 
 
@@ -274,10 +271,7 @@ game_over(Tab,Winner) :-
 
 b_pieces(Lb),
 w_pieces(Lw),
-
-(checkBlack(Lb) -> Winner = player2; 
-checkWhite(Lw) -> Winner = player1;
-Winner = none).
+ifElse(checkBlack(Lb),(Winner = player2),ifElse(checkWhite(Lw),(Winner = player1),(Winner = none))).
 
 
 checkBlack([H|Rest]) :-
