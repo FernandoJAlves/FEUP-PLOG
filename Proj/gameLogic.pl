@@ -239,7 +239,10 @@ endSim :-
     retractall(bSimCell(X,Y)),
     retractall(wSimCell(X,Y)).
 
-valid_moves(Board, Player, ListOfMoves) :-
+isEmptyCell(Y,X) :-
+    ifElse(blackCell(Y,X), fail, ifElse(whiteCell(Y,X), fail, true)).
+
+valid_moves(Board, Player, ListOfMoves, ListSize) :-
     currentPieces(Tab,Pieces),
     getYcoords(Pieces, Aux1, OutList1),
     getMinList(OutList1, MinY),
@@ -248,4 +251,50 @@ valid_moves(Board, Player, ListOfMoves) :-
     getXcoords(Pieces, Aux2, OutList2),
     getMinList(OutList2, MinX),
     getMaxList(OutList2, MaxX),
-    true.
+
+    NewMaxX is MaxX+1,
+    NewMaxY is MaxY+1,
+
+    SizeAux1 = 0,
+
+    validateUp(MinX,NewMaxX,ListAux1,ListAux2,SizeAux1,SizeAux2),
+    validateDown(MinX,NewMaxX,ListAux2,ListAux3,SizeAux2,SizeAux3),
+    validateLeft(MinY,NewMaxY,ListAux3,ListAux4,SizeAux3,SizeAux4),
+    validateRight(MinY,NewMaxY,ListAux4,ListAux5,SizeAux4,SizeAux5),
+
+    ListOfMoves = ListAux5,
+    ListSize = SizeAux5.
+
+validateUp(MaxX,MaxX,ListAux1,ListAux2,SizeAux1,SizeAux2) :- ListAux2 = ListAux1, SizeAux2 = SizeAux1.
+validateUp(MinX,MaxX,ListAux1,ListAux2,SizeAux1,SizeAux2) :-
+    NewMinX is MinX+1,
+    ifElse((\+ isEmptyCell(1,MinX), \+ isEmptyCell(2,MinX)),(validateUp(NewMinX,MaxX,ListAux1,ListAux2,SizeAux1,SizeAux2)),(append(ListAux1,[['u',MinX]],NewList),
+                                                                                                                            NewSize is SizeAux1+1,
+                                                                                                        validateUp(NewMinX,MaxX,NewList,ListAux2,NewSize,SizeAux2))).
+
+validateDown(MaxX,MaxX,ListAux1,ListAux2,SizeAux1,SizeAux2) :- ListAux2 = ListAux1, SizeAux2 = SizeAux1.
+validateDown(MinX,MaxX,ListAux1,ListAux2,SizeAux1,SizeAux2) :-
+    NewMinX is MinX+1,
+    ifElse((\+ isEmptyCell(19,MinX), \+ isEmptyCell(18,MinX)),(validateDown(NewMinX,MaxX,ListAux1,ListAux2,SizeAux1,SizeAux2)),(append(ListAux1,[['d',MinX]],NewList),
+                                                                                                                                NewSize is SizeAux1+1,
+                                                                                                                                validateDown(NewMinX,MaxX,NewList,ListAux2,NewSize,SizeAux2))).
+
+
+
+validateLeft(MaxY,MaxY,ListAux1,ListAux2,SizeAux1,SizeAux2) :- ListAux2 = ListAux1, SizeAux2 = SizeAux1.
+validateLeft(MinY,MaxY,ListAux1,ListAux2,SizeAux1,SizeAux2) :-
+    NewMinY is MinY+1,
+    CoordY is 20-MinY,
+    ifElse((\+ isEmptyCell(MinY,1), \+ isEmptyCell(MinY,2)),(validateLeft(NewMinY,MaxY,ListAux1,ListAux2,SizeAux1,SizeAux2)),(append(ListAux1,[['l',CoordY]],NewList),
+                                                                                                                                NewSize is SizeAux1+1,
+                                                                                                                                validateLeft(NewMinY,MaxY,NewList,ListAux2,NewSize,SizeAux2))).
+
+
+
+validateRight(MaxY,MaxY,ListAux1,ListAux2,SizeAux1,SizeAux2) :- ListAux2 = ListAux1, SizeAux2 = SizeAux1.
+validateRight(MinY,MaxY,ListAux1,ListAux2,SizeAux1,SizeAux2) :-
+    NewMinY is MinY+1,
+    CoordY is 20-MinY,
+    ifElse((\+ isEmptyCell(MinY,19), \+ isEmptyCell(MinY,18)),(validateRight(NewMinY,MaxY,ListAux1,ListAux2,SizeAux1,SizeAux2)),(append(ListAux1,[['r',CoordY]],NewList),
+                                                                                                                                NewSize is SizeAux1+1,
+                                                                                                                                validateRight(NewMinY,MaxY,NewList,ListAux2,NewSize,SizeAux2))).
