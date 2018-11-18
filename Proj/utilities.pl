@@ -102,3 +102,27 @@ setupTestTab(Tab) :-
 			[emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace],
 			[emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace],
 			[emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace]].
+
+
+char_index('A',1).
+char_index('B',2).
+char_index('C',3).
+char_index('D',4).
+char_index('E',5).
+char_index('F',6).
+char_index('G',7).
+char_index('H',8).
+char_index('I',9).
+char_index('J',10).
+char_index('K',11).
+char_index('L',12).
+char_index('M',13).
+char_index('N',14).
+char_index('O',15).
+char_index('P',16).
+char_index('Q',17).
+char_index('R',18).
+char_index('S',19).
+char_index(_,_) :- write('Invalid Input: you can only choose a letter between A and S.'),nl,fail.
+
+        

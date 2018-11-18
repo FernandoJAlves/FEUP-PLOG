@@ -193,28 +193,7 @@ update(PlayerTurn,_,Coord,Tab,NewTab):- write('Invalid Direction. You can only c
 
 charToIndex([Code|_],Index) :-
     char_code(Char,Code),
-    (
-        Char == 'A' -> Index is 1;
-        Char == 'B' -> Index is 2;
-        Char == 'C' -> Index is 3;
-        Char == 'D' -> Index is 4;
-        Char == 'E' -> Index is 5;
-        Char == 'F' -> Index is 6;
-        Char == 'G' -> Index is 7;
-        Char == 'H' -> Index is 8;
-        Char == 'I' -> Index is 9;
-        Char == 'J' -> Index is 10;
-        Char == 'K' -> Index is 11;
-        Char == 'L' -> Index is 12;
-        Char == 'M' -> Index is 13;
-        Char == 'N' -> Index is 14;
-        Char == 'O' -> Index is 15;
-        Char == 'P' -> Index is 16;
-        Char == 'Q' -> Index is 17;
-        Char == 'R' -> Index is 18;
-        Char == 'S' -> Index is 19;
-        write('Invalid Input: you can only choose a letter between A and S.'),nl,fail
-        ).
+    char_index(Char,Index).
 
 
 
