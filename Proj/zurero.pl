@@ -58,7 +58,7 @@ gameLoop(bvb,PlayerTurn,Tab) :-
 
 % For human to do his play
 playHuman(PlayerTurn,Direction,Tab,NewTab) :-
-    valid_moves(Board, Player, ListOfMoves, ListSize),
+    valid_moves(Board, Player, ListOfMoves),
     format("List: ~w",[ListOfMoves]), nl,
     repeat,
     playerMessage(PlayerTurn),nl,
@@ -130,7 +130,7 @@ interpretAux(X,Num):-
     checkCharList(X),
     number_codes(N,X),
     Num is N,
-    ifElse(N > 10,(write('Invalid Input: You have to select one position between 1 and 19'),nl,fail),true).
+    ifElse(N > 19,(write('Invalid Input: You have to select one position between 1 and 19'),nl,fail),true).
 
 % Checks the length of the human input
 checkLength(0) :- write('You have to select one position between 1 and 19'),nl,fail.
