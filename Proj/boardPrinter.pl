@@ -2,11 +2,6 @@
 display_game(Board):-
 	length(Board,L),
 	print_tab(Board,L),
-	write('Black Stones: '),
-	printBlackList,
-	nl,
-	write('White Stones: '),
-	printWhiteList,
 	nl.
 
 % Returns Initial Board

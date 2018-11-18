@@ -35,7 +35,6 @@ gameLoop(pvp,PlayerTurn,Tab) :-
 
 % Game Loop for player 1 when facing a computer
 gameLoop(pvb,player1,Tab) :-
-    %%format("Player 1", []), nl,
     display_game(Tab),
     playHuman(player1,Direction,Tab,NewTab),
     terminate(pvb,Direction,player1,NewTab).
@@ -59,7 +58,6 @@ gameLoop(bvb,PlayerTurn,Tab) :-
 % For human to do his play
 playHuman(PlayerTurn,Direction,Tab,NewTab) :-
     valid_moves(Board, Player, ListOfMoves),
-    format("List: ~w",[ListOfMoves]), nl,
     repeat,
     playerMessage(PlayerTurn),nl,
         (
@@ -79,13 +77,19 @@ checkMove(Direction,Num,ListOfMoves):- member([Direction,Num],ListOfMoves);fail.
 % For computer to do its play when level of intelligence is 1
 playBot(PlayerTurn,1,Direction,Tab,NewTab):-
     choose_move(Tab,1, PlayerTurn,Move),
-    format("Simulated Move: ~w~w", [MoveDir, MoveIndex]), nl,
+    Move = [_|Rest],
+    Rest = [MoveDir|Rest2],
+    Rest2 = [MoveIndex|_],
+    format("Computer Move: ~w~w", [MoveDir, MoveIndex]), nl,
     move(Move,Tab,NewTab).
 
 % For computer to do its play when level of intelligence is 2
 playBot(PlayerTurn,2,Direction,Tab,NewTab):-
     choose_move(Tab,2, PlayerTurn, Move),
-    format("Simulated Move: ~w~w", [MoveDir, MoveIndex]), nl,
+    Move = [_|Rest],
+    Rest = [MoveDir|Rest2],
+    Rest2 = [MoveIndex|_],
+    format("Computer Move: ~w~w", [MoveDir, MoveIndex]), nl,
     move(Move,Tab,NewTab).
 
 % Gets the range of columns possible
@@ -108,8 +112,7 @@ getYcoords([H|Rest], Yvalues, FinalList) :-
 currentPieces(Tab,Moves) :-
     b_pieces(Lb),
     w_pieces(Lw),
-    append(Lb,Lw,Moves),
-    format("Cells: ~w" , [Moves]), nl.
+    append(Lb,Lw,Moves).
     
 % Interprets the values of the human input
 interpret('l',List,Num) :- interpretAux(List,Num).
@@ -263,9 +266,7 @@ checkWhite([H|Rest]) :-
 
 % If the game has no winner continue to the next game loop, otherwise writes a congratulations message to the winner
 continueGame(none, GameMode,Player, Tab) :-
-    %%format("In continueGame", []), nl,
     changeTurn(Player,NextPlayer),
-    %%format("Player: ~w    Gamemode: ~w", [NextPlayer, GameMode]), nl,
     gameLoop(GameMode,NextPlayer,Tab).
 
 continueGame(player1, GameMode,Player, Tab) :-

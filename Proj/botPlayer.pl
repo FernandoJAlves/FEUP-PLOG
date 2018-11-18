@@ -15,7 +15,6 @@ choose_move(Board, 1, PlayerTurn,Move) :-
     Move = [PlayerTurn,Out1,Out2].
 choose_move(Board, 2, PlayerTurn,Move) :-
     valid_moves(Board, PlayerTurn, ListOfMoves),
-    format("ListOfMoves1: ~w", [ListOfMoves]),nl,
     simAllMoves(PlayerTurn,Board,ListOfMoves,Out1,Out2),
     Move = [PlayerTurn,Out1,Out2].
 
@@ -23,9 +22,7 @@ choose_move(Board, 2, PlayerTurn,Move) :-
 % Simulates all moves for a level 2 bot
 simAllMoves(PlayerTurn,Tab,ListOfMoves,MoveDir,MoveIndex) :- 
     simMovesAux(PlayerTurn,ListOfMoves, [], Lout,Tab),
-    format("Lout: ~w" ,[Lout]), nl,
     getBestMoves(Lout, -1000000, [], OutList, 0, SizeOut),
-    format("OutList: ~w", [OutList]), nl,
     selAMove(OutList,SizeOut,Out1,Out2),
     MoveDir = Out1,
     MoveIndex = Out2.
@@ -38,13 +35,8 @@ simMovesAux(PlayerTurn,ListMovesIn, Lin, Lout,Tab) :-
     ListMovesIn = [Pair|Rest],
     Pair = [Dir|Temp],
     Temp = [Index|_],
-    %b_piecesSim(ListTb),
-    %format("ListTb: ~w", [ListTb]), nl,
     updateSim(PlayerTurn,Dir,Index,Tab),
-    %b_piecesSim(ListTb2),
-    %format("ListTb2: ~w", [ListTb2]), nl,
     value(_,PlayerTurn,Value),
-    format("Value: ~w",[Value]), nl,
     append(Lin, [[Value, Dir, Index]], Aux),
     endSim,
     simMovesAux(PlayerTurn,Rest, Aux, Lout,Tab).
@@ -77,9 +69,7 @@ getBestMoves([], _, Aux, OutList, SizeAux, SizeOut) :- OutList = Aux, SizeOut = 
 getBestMoves(List, CurrMax, Aux, OutList, SizeAux, SizeOut) :-
     % OutList format will be [MoveDir, MoveIndex]
     List = [H|RestAux],
-    format("H: ~w     RestAux: ~w", [H,RestAux]), nl,
     H = [NewMax|CoordsPair],
-    format("Curr: ~w     Value: ~w     CoordsPair: ~w", [CurrMax,NewMax,CoordsPair]), nl,
     ifElse((NewMax > CurrMax), (NewAux = [CoordsPair],
                                 NewSize = 1,
                                 getBestMoves(RestAux, NewMax, NewAux, OutList, NewSize, SizeOut)),
