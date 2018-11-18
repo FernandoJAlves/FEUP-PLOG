@@ -267,7 +267,7 @@ validate_dia2_w(X,Y,L).
 
 
 
-game_over(Tab,Winner) :-
+game_over(Board,Winner) :-
 
 b_pieces(Lb),
 w_pieces(Lw),
