@@ -8,8 +8,7 @@ deactivateBot :- retractall(botInt(Num)).
 % Chooses a move for the bot to make
 choose_move(Tab, 1, MoveDir, MoveIndex) :-
     valid_moves(Tab, PlayerTurn, ListOfMoves, ListSize),
-    AuxSize is ListSize+1,
-    random(0,AuxSize,Aux),
+    random(0,ListSize,Aux),
     iterateList(Aux, ListOfMoves, Out1, Out2),
     MoveDir = Out1,
     MoveIndex = Out2.
