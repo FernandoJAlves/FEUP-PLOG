@@ -59,15 +59,17 @@ playHuman(PlayerTurn,Direction,Tab,NewTab) :-
     
     repeat,
         playerMessage(PlayerTurn),nl,
+        valid_moves(Board, Player, ListOfMoves, ListSize),
+        format("List: ~w",[ListOfMoves]), nl,
         write('Write your command: '),
         readPlay(Chars),
         Chars = [DirectionCode|Aux],
         char_code(Direction, DirectionCode),
-        interpret(Direction,Aux,Num),!,
-        move([PlayerTurn,Direction,Num],Tab,NewTab).
+        ifElse(interpret(Direction,Aux,Num),move([PlayerTurn,Direction,Num],Tab,NewTab),format("TODO",[])).
+        
 
 playBot(PlayerTurn,1,Direction,Tab,NewTab):-
-    choose_move(Tab,1, MoveDir, MoveIndex),
+    choose_move(Tab,1, MoveDir, MoveIndex,PlayerTurn),
     format("Simulated Move: ~w~w", [MoveDir, MoveIndex]), nl,
     move([PlayerTurn,MoveDir,MoveIndex],Tab,NewTab).
     %%format("After update", []), nl.
@@ -75,7 +77,7 @@ playBot(PlayerTurn,1,Direction,Tab,NewTab):-
 
 
 playBot(PlayerTurn,2,Direction,Tab,NewTab):-
-    choose_move(Tab,2, MoveDir, MoveIndex),
+    choose_move(Tab,2, MoveDir, MoveIndex,PlayerTurn),
     format("Simulated Move: ~w~w", [MoveDir, MoveIndex]), nl,
     move([PlayerTurn,MoveDir,MoveIndex],Tab,NewTab).
 
