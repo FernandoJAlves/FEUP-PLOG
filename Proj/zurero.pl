@@ -45,6 +45,7 @@ gameLoop(pvb,player2,Tab) :-
     display_game(Tab),
     botInt(Level),
     playBot(player2,Level,Direction,Tab,NewTab),
+    Direction = 'p', %%Valor aleatorio para ficar instanciado,
     terminate(pvb,Direction,player2,NewTab).
 
 % Game Loop for both players controlled by computer
