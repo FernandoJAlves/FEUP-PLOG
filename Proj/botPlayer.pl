@@ -1,18 +1,17 @@
 :- dynamic botInt/1.
 
-
+% Sets bot intelligence level
 setBotInt(Num):- assert(botInt(Num)).
+% Destroys current bot level
 deactivateBot :- retractall(botInt(Num)).
 
-
+% Chooses a move for the bot to make
 choose_move(Tab, 1, MoveDir, MoveIndex) :-
     currentPieces(Tab,Pieces),
     random(0,4,Aux),
     choose_move_dir(Pieces, Aux, Out1, Out2),
     MoveDir = Out1,
     MoveIndex = Out2.
-
-
 choose_move(Tab, 2, MoveDir, MoveIndex) :-
 
     PlayerTurn = player2,
@@ -25,7 +24,7 @@ choose_move(Tab, 2, MoveDir, MoveIndex) :-
     MoveIndex = Out2.
 
 
-
+% Simulates all moves for a level 2 bot
 simAllMoves(PlayerTurn,Tab,Moves) :- 
     currentPieces(Tab,Pieces),
     getYcoords(Pieces, Aux1, OutList1),
@@ -46,6 +45,7 @@ simAllMoves(PlayerTurn,Tab,Moves) :-
     getBestMoves(Lout, 0, [], OutList, 0, SizeOut),
     selAMove(OutList,SizeOut,MoveDir,MoveIndex).
 
+% Simulate all moves from up
 simMovesUp(PlayerTurn,MaxY, MaxY, Lin, Lout,Tab) :- Lout = Lin.
 simMovesUp(PlayerTurn,MinY, MaxY, Lin, Lout,Tab) :- 
     startSim,
@@ -57,24 +57,19 @@ simMovesUp(PlayerTurn,MinY, MaxY, Lin, Lout,Tab) :-
     endSim,
     simMovesUp(PlayerTurn,NewMin, MaxY, Aux, Lout,Tab).
     
-
+% Equivalent to update, but works inside a simulation
 updateSim(PlayerTurn,'l',MoveIndex,Tab) :- playLeftSim(PlayerTurn,Coord,Tab).
 updateSim(PlayerTurn,'r',MoveIndex,Tab) :- playRightSim(PlayerTurn,Coord,Tab).
 updateSim(PlayerTurn,'u',MoveIndex,Tab) :- playUpSim(PlayerTurn,Coord,Tab).
 updateSim(PlayerTurn,'d',MoveIndex,Tab) :- playDownSim(PlayerTurn,Coord,Tab).
 
-
-
-
-
-
+% Gives a value to a board
 value(Board, player1, Value) :- 
     b_piecesSim(Lb),
     valueBlack(Lb,0,OutVal1),
     w_piecesSim(Lw),
     valueWhite(Lw,0,OutVal2),
     Value is OutVal2 - OutVal1.
-    
 value(Board, player2, Value) :-
     b_piecesSim(Lb),
     valueBlack(Lb,0,OutVal1),
@@ -82,7 +77,7 @@ value(Board, player2, Value) :-
     valueWhite(Lw,0,OutVal2),
     Value is OutVal1 - OutVal2.
 
-
+% Gets the best moves out of the possible moves list
 getBestMoves([], _, Aux, OutList, SizeAux, SizeOut) :- OutList = Aux, SizeOut = SizeAux.
 getBestMoves(List, CurrMax, Aux, OutList, SizeAux, SizeOut) :-
     % OutList format will be [MoveDir, MoveIndex]
@@ -99,18 +94,14 @@ getBestMoves(List, CurrMax, Aux, OutList, SizeAux, SizeOut) :-
                                             getBestMoves(RestAux, CurrMax, NewAux, OutList, NewSize, SizeOut)),
                                                     getBestMoves(RestAux, CurrMax, Aux, OutList, SizeAux, SizeOut)))).
     
-    
-    % Usar o if else das aulas
-    % if List.head.head > CurrMax, clear Aux, SizeAux = 0, append [MoveDir, MoveIndex], getBestMoves(Tail, List.head, NewAux, OutList)
-    % else if List.head.head == CurrMax (permitir multiplas jogadas, depois escolhe 1 random dessas), append [MoveDir, MoveIndex], SizeAux++ ,getBestMoves(Tail, CurrMax, NewAux, OutList)
-    % else getBestMoves(Tail, CurrMax, NewAux, OutList)
-    
+% Selects one move from the list of moves calculated by getBestMoves
 selAMove(BestMoves,SizeList,MoveDir,MoveIndex) :-
     random(0, SizeList, Index),
     iterateList(Index, BestMoves, Out1, Out2),
     MoveDir = Out1,
     MoveIndex = Out2.
 
+% Returns the MoveDir and MoveIndex of the move in position Index of the List
 iterateList(0, [H|Rest], MoveDir, MoveIndex) :-
     H = [MoveDir|Aux],
     Aux = [MoveIndex|_].
@@ -119,7 +110,7 @@ iterateList(Index, [H|Rest], MoveDir, MoveIndex) :-
     iterateList(NewIndex, Rest, MoveDir, MoveIndex).
 
 
-
+% Gives a Value for the board for a player with black stones
 valueBlack([],AuxSum,OutVal) :- OutVal = AuxSum.
 valueBlack([H|Rest],AuxSum,OutVal) :-
     H = [X|Aux],
@@ -127,6 +118,7 @@ valueBlack([H|Rest],AuxSum,OutVal) :-
     avaliate_b(X,Y,AuxSum,Out1),
     valueBlack(Rest,Out1,OutVal).
 
+% Gives a Value for the board for a player with white stones
 valueWhite([],AuxSum,OutVal) :- OutVal = AuxSum.
 valueWhite([H|Rest],AuxSum,OutVal) :-
     H = [X|Aux],
@@ -134,6 +126,7 @@ valueWhite([H|Rest],AuxSum,OutVal) :-
     avaliate_w(X,Y,AuxSum,Out1),
     valueWhite(Rest,Out1,OutVal).
 
+% Avaliates a black piece and returns a value
 avaliate_b(X,Y,Aux1,OutVal) :-
     b_piecesSim(Lb),
     w_piecesSim(Lw),
@@ -148,6 +141,7 @@ avaliate_b(X,Y,Aux1,OutVal) :-
     avaliate_dia2_rev_b(X,Y,Lw,Lb,Aux8,Aux9),
     OutVal is Aux9.
 
+% Avaliates a white piece and returns a value
 avaliate_w(X,Y,Aux1,OutVal) :-
     b_piecesSim(Lb),
     w_piecesSim(Lw),
@@ -161,20 +155,21 @@ avaliate_w(X,Y,Aux1,OutVal) :-
     avaliate_dia2_rev_w(X,Y,Lw,Lb,Aux8,Aux9),
     OutVal is Aux9.
 
-
-
+% Counts the number of pieces of a given color in a horizontal line
 countHor(Xmax,Y,L,OldN,NewN,Xmax) :- NewN = OldN.
 countHor(X,Y,L,OldN,NewN,Xmax) :-
     ifElse(member([X,Y], L),Aux is OldN+1,Aux is OldN),
     NewX is X+1,
     countHor(NewX,Y,L,Aux,NewN,Xmax).
 
+% Counts the number of pieces of a given color in a vertical line
 countVert(X,Ymax,L,OldN,NewN,Ymax) :- NewN = OldN.
 countVert(X,Y,L,OldN,NewN,Ymax) :-
     ifElse(member([X,Y], L),Aux is OldN+1,Aux is OldN),
     NewY is Y+1,
     countVert(X,NewY,L,Aux,NewN,Ymax).
 
+% Counts the number of pieces of a given color in a diagonal line (quadrant 3 to 1)
 countDia1(Nmax,_,L,OldN,NewN,Nmax) :- NewN = OldN.
 countDia1(X,Y,L,OldN,NewN,Nmax) :-
     ifElse(member([X,Y], L),Aux is OldN+1,Aux is OldN),
@@ -182,6 +177,7 @@ countDia1(X,Y,L,OldN,NewN,Nmax) :-
     NewY is Y+1,
     countDia1(NewX,NewY,L,Aux,NewN,Nmax).
 
+% Counts the number of pieces of a given color in a diagonal line (quadrant 2 to 4)
 countDia2(Nmax,_,L,OldN,NewN,Nmax) :- NewN = OldN.
 countDia2(X,Y,L,OldN,NewN,Nmax) :-
     ifElse(member([X,Y], L),Aux is OldN+1,Aux is OldN),
@@ -189,7 +185,7 @@ countDia2(X,Y,L,OldN,NewN,Nmax) :-
     NewY is Y-1,
     countDia2(NewX,NewY,L,Aux,NewN,Nmax).
 
-
+% Avaliates a horizontal line for black pieces
 avaliate_hor_b(X,Y,Lw,Lb,Aux1,Aux2) :-
     Xmax is X+5,
     OldNb is 0,
@@ -199,6 +195,7 @@ avaliate_hor_b(X,Y,Lw,Lb,Aux1,Aux2) :-
     scoreLine(NewNb,NewNw,Aval),
     Aux2 is Aux1 + Aval.
 
+% Avaliates a reversed horizontal line for black pieces
 avaliate_hor_rev_b(X,Y,Lw,Lb,Aux1,Aux2) :-
     Xmin is X-4,
     Xmax is X+1,
@@ -209,7 +206,7 @@ avaliate_hor_rev_b(X,Y,Lw,Lb,Aux1,Aux2) :-
     scoreLine(NewNb,NewNw,Aval),
     Aux2 is Aux1 + Aval.    
     
-
+% Avaliates a horizontal line for white pieces
 avaliate_hor_w(X,Y,Lw,Lb,Aux1,Aux2) :-
     Xmax is X+5,
     OldNb is 0,
@@ -219,6 +216,7 @@ avaliate_hor_w(X,Y,Lw,Lb,Aux1,Aux2) :-
     scoreLine(NewNw,NewNb,Aval),
     Aux2 is Aux1 + Aval.
 
+% Avaliates a reversed horizontal line for white pieces
 avaliate_hor_rev_w(X,Y,Lw,Lb,Aux1,Aux2) :-
     Xmin is X-4,
     Xmax is X+1,
@@ -229,6 +227,7 @@ avaliate_hor_rev_w(X,Y,Lw,Lb,Aux1,Aux2) :-
     scoreLine(NewNw,NewNb,Aval),
     Aux2 is Aux1 + Aval.        
 
+% Avaliates a vertical line for black pieces
 avaliate_vert_b(X,Y,Lw,Lb,Aux1,Aux2) :-
     Ymax is Y+5,
     OldNb is 0,
@@ -238,6 +237,7 @@ avaliate_vert_b(X,Y,Lw,Lb,Aux1,Aux2) :-
     scoreLine(NewNb,NewNw,Aval),
     Aux2 is Aux1 + Aval.
 
+% Avaliates a reversed vertical line for black pieces
 avaliate_vert_rev_b(X,Y,Lw,Lb,Aux1,Aux2) :-
     Ymax is Y+1,
     Ymin is Y-4,
@@ -248,6 +248,7 @@ avaliate_vert_rev_b(X,Y,Lw,Lb,Aux1,Aux2) :-
     scoreLine(NewNb,NewNw,Aval),
     Aux2 is Aux1 + Aval.    
 
+% Avaliates a vertical line for white pieces
 avaliate_vert_w(X,Y,Lw,Lb,Aux1,Aux2) :-
     Ymax is Y+5,
     OldNb is 0,
@@ -257,6 +258,7 @@ avaliate_vert_w(X,Y,Lw,Lb,Aux1,Aux2) :-
     scoreLine(NewNw,NewNb,Aval),
     Aux2 is Aux1 + Aval.
 
+% Avaliates a reversed vertical line for white pieces
 avaliate_vert_rev_w(X,Y,Lw,Lb,Aux1,Aux2) :-
     Ymax is Y+1,
     Ymin is Y-4,
@@ -267,6 +269,7 @@ avaliate_vert_rev_w(X,Y,Lw,Lb,Aux1,Aux2) :-
     scoreLine(NewNw,NewNb,Aval),
     Aux2 is Aux1 + Aval.    
 
+% Avaliates a diagonal 1 line for black pieces
 avaliate_dia1_b(X,Y,Lw,Lb,Aux1,Aux2) :-
     Nmax is X+5,
     OldNb is 0,
@@ -276,6 +279,7 @@ avaliate_dia1_b(X,Y,Lw,Lb,Aux1,Aux2) :-
     scoreLine(NewNb,NewNw,Aval),
     Aux2 is Aux1 + Aval.
 
+% Avaliates a reversed diagonal 1 line for black pieces
 avaliate_dia1_rev_b(X,Y,Lw,Lb,Aux1,Aux2) :-
     Nmax is X+1,
     Xmin is X-4,
@@ -287,6 +291,7 @@ avaliate_dia1_rev_b(X,Y,Lw,Lb,Aux1,Aux2) :-
     scoreLine(NewNb,NewNw,Aval),
     Aux2 is Aux1 + Aval.    
 
+% Avaliates a diagonal 1 line for white pieces
 avaliate_dia1_w(X,Y,Lw,Lb,Aux1,Aux2) :-
     Nmax is X+5,
     OldNb is 0,
@@ -296,6 +301,7 @@ avaliate_dia1_w(X,Y,Lw,Lb,Aux1,Aux2) :-
     scoreLine(NewNw,NewNb,Aval),
     Aux2 is Aux1 + Aval.
 
+% Avaliates a reversed diagonal 1 line for white pieces
 avaliate_dia1_rev_w(X,Y,Lw,Lb,Aux1,Aux2) :-
     Nmax is X+1,
     Xmin is X-4,
@@ -307,7 +313,7 @@ avaliate_dia1_rev_w(X,Y,Lw,Lb,Aux1,Aux2) :-
     scoreLine(NewNw,NewNb,Aval),
     Aux2 is Aux1 + Aval.    
 
-
+% Avaliates a diagonal 2 line for black pieces
 avaliate_dia2_b(X,Y,Lw,Lb,Aux1,Aux2) :-
     Nmax is X+5,
     OldNb is 0,
@@ -317,6 +323,7 @@ avaliate_dia2_b(X,Y,Lw,Lb,Aux1,Aux2) :-
     scoreLine(NewNb,NewNw,Aval),
     Aux2 is Aux1 + Aval.
 
+% Avaliates a reversed diagonal 2 line for black pieces
 avaliate_dia2_rev_b(X,Y,Lw,Lb,Aux1,Aux2) :-
     Nmax is X+1,
     Xmin is X-4,
@@ -328,6 +335,7 @@ avaliate_dia2_rev_b(X,Y,Lw,Lb,Aux1,Aux2) :-
     scoreLine(NewNb,NewNw,Aval),
     Aux2 is Aux1 + Aval.
 
+% Avaliates a diagonal 2 line for white pieces
 avaliate_dia2_w(X,Y,Lw,Lb,Aux1,Aux2) :-
     Nmax is X+5,
     OldNb is 0,
@@ -337,6 +345,7 @@ avaliate_dia2_w(X,Y,Lw,Lb,Aux1,Aux2) :-
     scoreLine(NewNw,NewNb,Aval),
     Aux2 is Aux1 + Aval.
 
+% Avaliates a reversed diagonal 2 line for white pieces
 avaliate_dia2_rev_w(X,Y,Lw,Lb,Aux1,Aux2) :-
     Nmax is X+1,
     Xmin is X-4,
