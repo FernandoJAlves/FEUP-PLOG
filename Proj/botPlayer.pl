@@ -35,6 +35,7 @@ simAllMoves(PlayerTurn,Tab,Moves) :-
     getMinList(OutList2, MinX),
     getMaxList(OutList2, MaxX),
 
+    format("MinY: ~w   MaxY: ~w   MinX: ~w    MaxX: ~w", [MinY, MaxY,MinX,MaxX]), nl,
     % Ver aqui
     NewMaxY is MaxY+1,
     NewMaxX is MaxX+1,
@@ -50,9 +51,12 @@ simMovesUp(PlayerTurn,MaxY, MaxY, Lin, Lout,Tab) :- Lout = Lin.
 simMovesUp(PlayerTurn,MinY, MaxY, Lin, Lout,Tab) :- 
     startSim,
     b_piecesSim(ListTb),
+    format("ListTb: ~w", [ListTb]), nl,
     updateSim(PlayerTurn,'u',MinY,Tab),
     b_piecesSim(ListTb2),
+    format("ListTb2: ~w", [ListTb2]), nl,
     value(_,PlayerTurn,Value),
+    format("Value: ~w",[Value]), nl,
     append(Lin, [[Value, 'u', MinY]], Aux),
     NewMin is MinY+1,
     endSim,

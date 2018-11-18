@@ -106,21 +106,21 @@ choose_move_dir(Moves, 3, Out1, Out2) :-
 
 getXcoords([], Xvalues, FinalList) :- FinalList = Xvalues.
 getXcoords([H|Rest], Xvalues, FinalList) :-
-    H = [X|Aux],
-    Aux = [Y|_],
+    H = [Y|Aux],
+    Aux = [X|_],
     append(Xvalues, [X], NewList),
     getXcoords(Rest, NewList, FinalList).
 
 getYcoords([], Yvalues, FinalList) :- FinalList = Yvalues.
 getYcoords([H|Rest], Yvalues, FinalList) :-
-    H = [X|Aux],
-    Aux = [Y|_],
+    H = [Y|Aux],
+    Aux = [X|_],
     append(Yvalues, [Y], NewList),
     getYcoords(Rest, NewList, FinalList).
 
 
 range_hor(Pieces, Out) :- 
-    getYcoords(Pieces, Aux, OutList),
+    getXcoords(Pieces, Aux, OutList),
     %%format("OutList Hor1: ~w", [OutList]), nl,
     getMinList(OutList, Min),
     %%format("OutList Hor1: ~w", [OutList]), nl,
@@ -129,7 +129,7 @@ range_hor(Pieces, Out) :-
     random(Min, NewMax, Out).
     
 range_vert(Pieces, Out) :- 
-    getXcoords(Pieces, Aux, OutList),
+    getYcoords(Pieces, Aux, OutList),
     %%format("OutList Vert1: ~w", [OutList]), nl,
     getMinList(OutList, Min),
     %%format("OutList Vert2: ~w", [OutList]), nl,

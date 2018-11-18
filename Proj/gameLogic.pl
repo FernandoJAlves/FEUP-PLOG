@@ -240,3 +240,14 @@ startSim :-
 endSim :-
     retractall(bSimCell(X,Y)),
     retractall(wSimCell(X,Y)).
+
+valid_moves(Board, Player, ListOfMoves) :-
+    currentPieces(Tab,Pieces),
+    getYcoords(Pieces, Aux1, OutList1),
+    getMinList(OutList1, MinY),
+    getMaxList(OutList1, MaxY),
+
+    getXcoords(Pieces, Aux2, OutList2),
+    getMinList(OutList2, MinX),
+    getMaxList(OutList2, MaxX),
+    true.
