@@ -49,19 +49,20 @@ simAllMoves(PlayerTurn,Tab,Moves) :-
 simMovesUp(PlayerTurn,MaxY, MaxY, Lin, Lout,Tab) :- Lout = Lin.
 simMovesUp(PlayerTurn,MinY, MaxY, Lin, Lout,Tab) :- 
     startSim,
+    b_piecesSim(ListTb),
     updateSim(PlayerTurn,'u',MinY,Tab),
+    b_piecesSim(ListTb2),
     value(_,PlayerTurn,Value),
     append(Lin, [[Value, 'u', MinY]], Aux),
     NewMin is MinY+1,
-    format("Value: ~w", [Value]),nl,
     endSim,
     simMovesUp(PlayerTurn,NewMin, MaxY, Aux, Lout,Tab).
     
 % Equivalent to update, but works inside a simulation
-updateSim(PlayerTurn,'l',MoveIndex,Tab) :- playLeftSim(PlayerTurn,Coord,Tab).
-updateSim(PlayerTurn,'r',MoveIndex,Tab) :- playRightSim(PlayerTurn,Coord,Tab).
-updateSim(PlayerTurn,'u',MoveIndex,Tab) :- playUpSim(PlayerTurn,Coord,Tab).
-updateSim(PlayerTurn,'d',MoveIndex,Tab) :- playDownSim(PlayerTurn,Coord,Tab).
+updateSim(PlayerTurn,'l',MoveIndex,Tab) :- playLeftSim(PlayerTurn,MoveIndex,Tab).
+updateSim(PlayerTurn,'r',MoveIndex,Tab) :- playRightSim(PlayerTurn,MoveIndex,Tab).
+updateSim(PlayerTurn,'u',MoveIndex,Tab) :- playUpSim(PlayerTurn,MoveIndex,Tab).
+updateSim(PlayerTurn,'d',MoveIndex,Tab) :- playDownSim(PlayerTurn,MoveIndex,Tab).
 
 % Gives a value to a board
 value(Board, player1, Value) :- 

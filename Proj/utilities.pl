@@ -89,18 +89,22 @@ ifElse(C,G,E) :- E.
 
 
 setupTestTab(Tab) :-
-	storeCell(blackStone,5,2),
-	storeCell(blackStone,5,3),
 	storeCell(blackStone,4,2),
-	storeCell(whiteStone,4,3),
-	storeCell(whiteStone,6,3),
+	storeCell(blackStone,5,2),
+	storeCell(blackStone,6,2),
+	storeCell(blackStone,7,2),
+	storeCell(blackStone,4,3),
+	storeCell(whiteStone,3,3),
+	storeCell(whiteStone,5,3),
+	storeCell(whiteStone,5,4),
+
 	Tab = [[emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace],
 			[emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace],
 			[emptySpace,emptySpace,whiteStone,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace],
 			[emptySpace,blackStone,blackStone,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace],
-			[emptySpace,blackStone,whiteStone,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace],
-			[emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace],
-			[emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace],
+			[emptySpace,blackStone,whiteStone,whiteStone,emptySpace,emptySpace,emptySpace,emptySpace],
+			[emptySpace,blackStone,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace],
+			[emptySpace,blackStone,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace],
 			[emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace,emptySpace]].
 
 
