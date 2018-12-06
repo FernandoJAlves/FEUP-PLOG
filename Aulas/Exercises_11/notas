@@ -1,0 +1,60 @@
+Exercicios:
+    - IPLR4 (criptogramas)
+    - fechadura
+    - IPLR5 (guardas no forte)
+    - IPLR3 (n-queens)
+
+Pesquisa de Soluçoes: labeling(Opt, Vars)
+
+
+Passos típicos na resolução de um clp (FD):
+    - definição das variáveis e respetivos domínios
+    - aplicar as restrições do problema
+    - procura de solução:
+      - admissivel (backtracking)
+      - optima (branch & bound)
+        - função de avaliação
+
+Aplicação de restrições:
+    - aritmeticas(#): 
+        - #>
+        - #<
+        - #=
+        - #\=
+    
+    - logicas:
+        - #\/
+        - #/\
+        - #=>
+        - #<=>
+    
+    - de dominio
+        - all_different(Vars)
+        - all_distinct(Vars)
+
+Mudança de paradigma: generate & test ---> constrain & generate
+
+Uso de biblioteca (Section 10_10): 
+    :- use_module(library(clpfd))
+
+Aplicação de domínios:
+    - Var in 1..5
+    - domain(List, 1, 5)
+
+
+(!!!) Ter atenção ao ; -> (A #> 10; B #> 10)
+
+
+Fechadura
+
+A comb. de uma fechadura é composta por 3 nºs entre 1 e 50
+O 2º numero é o dobro do primeiro
+O 3º é igual ao 2º mais 10
+A soma dos 2 primeiros é maior que 10
+O primeiro nº tem um digito par e outro impar. O segundo tem ou ambos par ou ambos impar
+
+
+
+
+
+

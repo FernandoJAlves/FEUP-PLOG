@@ -1,0 +1,118 @@
+Exercicios:
+
+    PLS 5 (fila_de_carros)
+    12 automoveis
+
+
+Lógica de restrições
+    - #/\, #\/
+    - Cuidado com R1;R2 (ponto e virgula)
+
+
+Restrições com Listas
+
+    - element (Index, List, Value)
+        - List[Index] = Value
+        - Index stars at 1 (parecido com nth1)
+    - sum (List, RelOp(?), Value)
+        - (somatorio(i))List(i) RelOp Value
+    - global_cardinality(List, Values)
+        - Values = [K1-V1, ... , Kn-Vn]
+    - scalar_product(Coeffs, List, RelOp, Value)
+        - (somatorio(i))Coeffs(i) * List(i) RelOp Value
+    - count(Val, List, RelOp, Value)
+
+
+Restrições reificáveis:
+
+    - the process of reflecting the restriction's true value into a binary variable (0/1)
+    - Constraint #<=> B 
+    - example:
+        exactly(_,[],0),
+        exactly(X,[Y|R],N) :-
+            X #= Y #<=> B, (1 se X=Y, else será 0)
+            N #= M+B,
+            exactly(X,R,M).
+
+
+PLS 5 (fila_de_carros)
+
+Dimensões:
+    - cor      |\
+               | > o que os une: posição
+    - tamanho  |/
+
+
+|| - - - - 
+||                      
+|| - - - - 
+
+fila_de_carros(Vars) :-
+    Colors = [C1,C2,C3,C4] % cores nas pos (?)
+    Sizes = [S1,S2,S3,S4]
+    domain(Colors, 1,4), domain(Sizes, 1,4), Amarelo = 1, Verde = 2, Azul = 3, Preto = 4,
+    all_distinct(Colors), all_distinct(Sizes),
+    element(PosAzul, Colors, Azul), PosAntesAzul #= PosAzul-1, PosDepoisAzul #= PosAzul+1,
+    element(PosAntesAzul, Sizes, SizeAntesAzul), element(PosDepoisAzul, Sizes, SizeDepoisAzul),
+    SizeAntesAzul #< SizeDepoisAzul,
+    element(PosVerde, Colors, Verde), element(PosVerde, Sizes, 1), PosVerde #> PosAzul,
+    element(PosAmarelo, Colors, Amarelo), element(PosPreto, Colors, Preto),
+    PosPreto #< PosAmarelo,
+    labelling([ff], Vars).
+
+fila_de_carros2(Vars) :-
+    Colors = [Amarelo, Verde, Azul, Preto], Sizes = [Mini, Pequeno, Medio, Grande], append(Colors, Sizes, Vars),
+    domain(Colors,1,4), domain(Sizes,1,4), all_distinct(Colors), all_distinct(Sizes),
+    PosAntesAzul #= Azul - 1, PosDepoisAzul #= Azul + 1,
+    element(SizeAntesAzul, Sizes, PosAntesAzul), element(SizeDepoisAzul, Sizes, PosDepoisAzul), SizeAntesAzul #< SizeDepoisAzul,
+    Verde #= Mini
+    Verde #= Azul
+
+
+12 automoveis
+    12 automoveis estao parados em fila. Sabe-se que:
+
+        - distribuiçao carros:
+            - 4 amarelos
+            - 2 verdes
+            - 3 vermelhos
+            - 3 azuis
+        - o 1º e o ultimo são da mesma cor
+        - o 2º e o penultimo são da mesma cor
+        - o 5º é azul 
+        - todos os conjuntos de 3 automoveis consecutivos tem cores distintas
+        - partindo do 1º automovel p/ o ultimo é possivel visualizar a seq amarelo-verde-vermelho-azul 1 unica vez
+
+carros(Lista) :-
+    length(Lista,12),
+    % 1-y, 2-g, 3-r, 4-b
+
+    domain(Lista,1,4),
+    global_cardinality(Lista,[1-4,2-2,3-3,4-3]),
+    element(1,Lista,X), element(12,Lista, X),
+    element(2,Lista,Y), element(11,Lista, Y),
+    element(5,Lista,4)
+
+    /*
+    (alternativa ao bloco anterior)
+    Lista = [A1,A2,_,_,A5,_,_,_,_,_,A11,A12],
+    A1 #= A12,
+    A2 #= A11,
+    A5 #= 4,
+    */
+
+    trios(Lista),
+    quad(Lista, LC), sum(LC, #=, 1),
+    labelling([ff],Lista).
+
+
+
+trios([_,_]).
+trios([A,B,C|R]) :-
+    all_distinct([A,B,C]),
+    trios([B,C|R]).
+
+quad([_,_,_],[]).
+quad([A,B,C,D|R], [V|RV]) :-
+    A #= 1 #/\ B #= 2 #/\ C #= 3 #/\ D #= 4 #<=> V,
+    quad([B,C,D|R],RV).
