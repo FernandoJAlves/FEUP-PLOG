@@ -41,7 +41,9 @@ print_mem :-
     format("Val: ~w  X: ~w  Y: ~w", [Val,X,Y]), nl,
     fail; true.
 
-
+% If/Else operator
+ifElse(C,G,E) :- C, !, G.
+ifElse(C,G,E) :- E.
 
 fetch_board(tab1, Tab) :-
 
