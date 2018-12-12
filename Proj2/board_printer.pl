@@ -76,3 +76,22 @@ fetch_board(tab3, Tab) :-
             [0, 1, 1, 0, 0, 0, 0, 1, 0, 1],
             [0, 0, 1, 1, 1, 0, 1, 0, 1, 0]].
 */
+
+
+
+% Sets a piece in a given position
+setPeca(1, ElemCol, NewElem, [RowAtTheHead|RemainingRows], [NewRowAtTheHead|RemainingRows]):-
+	setPecaLinha(ElemCol, NewElem, RowAtTheHead, NewRowAtTheHead).
+
+setPeca(ElemRow, ElemCol, NewElem, [RowAtTheHead|RemainingRows], [RowAtTheHead|ResultRemainingRows]):-
+	ElemRow > 1,
+	ElemRow1 is ElemRow-1,
+	setPeca(ElemRow1, ElemCol, NewElem, RemainingRows, ResultRemainingRows).
+
+% Sets a piece in a line: 1. position; 2. element to use on replacement; 3. current list; 4. resultant list.
+setPecaLinha(1, Elem, [_|L], [Elem|L]).
+setPecaLinha(I, Elem, [H|L], [H|ResL]):-
+	I > 1,
+	I1 is I-1,
+	setPecaLinha(I1, Elem, L, ResL).
+

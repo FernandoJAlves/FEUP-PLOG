@@ -118,6 +118,13 @@ iterate_solid([Point|Rest], Val, Lin, VarsList) :-
     iterate_solid(Rest, Val, OutList, VarsList).
 
 
+% Sets the board to 1 where its needed
+setBoardVars([], _, OutTab, OutTab).
+setBoardVars([H|Rest], CurrLine, InTab, OutTab) :-
+    setPeca(H,CurrLine,1,InTab,AuxTab),
+    setBoardVars(Rest, CurrLine, AuxTab, OutTab).
+
+
 % Fills the board with relations
 fill_board([], _, Tab, Tab).
 fill_board([H|Rest], Nvars, InTab, OutTab) :- 
@@ -130,9 +137,9 @@ fill_board([H|Rest], Nvars, InTab, OutTab) :-
 
     format("~w - Near Vars: ~w  ", [H,VarsList]), nl,
 
-    %setBoard
+    setBoardVars(VarsList, H, InTab, AuxTab),
 
-    fill_board(Rest, Nvars, InTab, OutTab).
+    fill_board(Rest, Nvars, AuxTab, OutTab).
 
 
 % Processa o board para devolver no input necessário para o solver
