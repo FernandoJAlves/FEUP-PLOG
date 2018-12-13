@@ -135,11 +135,19 @@ fill_board([H|Rest], Nvars, InTab, OutTab) :-
 
     iterate_solid(Coords, H, [], VarsList), /*TODO - Changes 1 to H*/ 
 
-    format("~w - Near Vars: ~w  ", [H,VarsList]), nl,
+    %format("~w - Near Vars: ~w  ", [H,VarsList]), nl,
 
     setBoardVars(VarsList, H, InTab, AuxTab),
 
     fill_board(Rest, Nvars, AuxTab, OutTab).
+
+% Extrai os indices dos solidos selecionados
+extractSolidIndexes([], _, OutList, OutList).
+extractSolidIndexes([H|Rest], SolidN, InList, OutList) :-
+    ifElse(H #= 1, append(InList, [SolidN], AuxList), AuxList = InList),
+    NewN is SolidN + 1,
+    extractSolidIndexes(Rest, NewN, AuxList, OutList).
+
 
 
 % Processa o board para devolver no input necessário para o solver
@@ -152,11 +160,11 @@ process_board(OriginalTab, Tab) :-
     num_solids(OriginalTab, [], VarsList),
     length(VarsList, Nvars),
 
-    format("VarsList: ~w   Nvars: ~w", [VarsList, Nvars]),nl,
+    %format("VarsList: ~w   Nvars: ~w", [VarsList, Nvars]),nl,
     
     create_empty_board(Nvars, Nvars, [], EmptyTab),
 
-    format("EmptyTab: ~w ", [EmptyTab]), nl,
+    %format("EmptyTab: ~w ", [EmptyTab]), nl,
 
     fill_board(VarsList, Nvars, EmptyTab, Tab).
 
@@ -164,26 +172,40 @@ process_board(OriginalTab, Tab) :-
 % Versao do solver em que o user escolhe um board pelo nome
 cm(Vars, TabName) :- 
 
+    retractall(cellContent(Val,X,Y)), % To erase values from previous executions
+
     fetch_board(TabName,OriginalTab),
 
     nl, format("Initial Board: ",[]), nl,
     print_board(OriginalTab),
 
-    process_board(OriginalTab, Tab),
+    process_board(OriginalTab, Tab), % Converts the board to a input that the solver understands
 
-    nl, format("Process Board: ",[]), nl,
-    print_board(Tab),
+    nl, format("Board Selected, press enter to continue to solver ",[]), nl,
+    read_line(_),
+
+    %nl, format("Processed Board: ",[]), nl,
+    %print_board(Tab),
  
-
-    length(Tab,Nvars),
-    length(Vars,Nvars),
-
-    domain(Vars,0,1),
+    length(Tab,Nvars),  % Defines size of Nvars
+    length(Vars,Nvars), % Defines size of the Vars list
+    domain(Vars,0,1),   % Defines the domain of every element of Vars
     
     check_board(Vars,Vars,Tab,Nvars),
 
-    sum(Vars,#=,Sum),
+    sum(Vars,#=,Sum), !,
+
+    extractSolidIndexes(Vars, 1, [], IndexList),
+
+    %format("Indexes: ~w", [IndexList]), nl,
+
+    nl, format("Final Board: ",[]), nl,
+    draw_board_final(OriginalTab, IndexList),
+
+
     labeling([maximize(Sum)], Vars).
+
+    
        
 
 check_board(_,[],[],_).
@@ -222,3 +244,11 @@ num_solids(OutList) :-
             [0, 0, 0, 0, 0, 1 ,0]].
 */
 
+/*
+    Tab =  [[0, 0, 0, 0, 0],
+            [0, 0, 1, 0, 0],
+            [0, 1, 0, 1, 0],
+            [0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 0]].
+
+*/

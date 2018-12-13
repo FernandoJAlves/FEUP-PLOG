@@ -14,7 +14,7 @@ save_board([H|Rest],NLinha) :-
 
 print_line([]) :- format("|",[]), nl.
 print_line([H|Rest]) :-
-    format("| ~w ", [H]),
+    ifElse(H == 0, format("|   ", []), format("| ~w ", [H])),
     print_line(Rest).
 
 print_separator(0) :- write('+'), nl.
@@ -34,6 +34,22 @@ print_board([H|Rest]) :-
     print_line(H),
     print_board(Rest).
 
+% Draw final board - TODO -> Use fancy unicode or something
+draw_board_final([H|[]], Vars) :-
+    length(H, SizeL),
+    print_separator(SizeL),
+    print_line_final(H, Vars),
+    print_separator(SizeL).
+draw_board_final([H|Rest], Vars) :-
+    length(H, SizeL),
+    print_separator(SizeL),
+    print_line_final(H, Vars),
+    draw_board_final(Rest, Vars).
+
+print_line_final([],_) :- format("|",[]), nl.
+print_line_final([H|Rest], Vars) :-
+    ifElse(member(H,Vars), format("| ~w ", [H]), format("|   ", [])),
+    print_line_final(Rest, Vars).
 
 
 print_mem :-
@@ -54,15 +70,20 @@ fetch_board(tab1, Tab) :-
             [5,5,0,6,6,0,7,7],
             [0,5,5,6,0,7,7,0]].       
 
-/*
-fetch_board(tab2, Tab) :-
-            %1, 2, 3, 4, 5 
-    Tab =  [[0, 0, 0, 0, 0],
-            [0, 0, 1, 0, 0],
-            [0, 1, 0, 1, 0],
-            [0, 0, 1, 0, 0],
-            [0, 0, 0, 0, 0]].
 
+fetch_board(tab2, Tab) :-
+            %1, 2, 3, 4, 5, 6, 7, 8, 9 
+    Tab =  [[0, 1, 1, 0, 0, 0, 0, 0, 0], % 1
+            [1, 1, 0, 0, 0, 0, 0, 0, 0], % 2
+            [1, 0, 0, 0, 0, 0, 0, 0, 0], % 3
+            [0, 0, 2, 0, 0, 0, 0, 0, 0], % 4
+            [0, 2, 2, 0, 0, 0, 0, 0, 0], % 5
+            [2, 2, 0, 0, 0, 0, 0, 0, 0], % 6
+            [3, 0, 0, 0, 4, 4, 0, 0, 5], % 7
+            [3, 3, 0, 4, 4, 0, 0, 5, 5], % 8 
+            [0, 3, 3, 4, 0, 0, 5, 5, 0]].% 9
+
+/*
 fetch_board(tab3, Tab) :-
             %1, 2, 3, 4, 5, 6, 7, 8, 9, 10 
     Tab =  [[0, 1, 0, 0, 0, 0, 0, 1, 0, 0],
