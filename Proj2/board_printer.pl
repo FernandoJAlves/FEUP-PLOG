@@ -1,10 +1,11 @@
-
+% Saves a line in memory
 save_line([],_,_).
 save_line([H|Rest],NLinha,NColuna) :-
     assert(cellContent(H,NLinha, NColuna)),
     NewNColuna is NColuna+1,
     save_line(Rest,NLinha,NewNColuna).
 
+% Saves a board in memory
 save_board([],_).
 save_board([H|Rest],NLinha) :-
     save_line(H,NLinha,1),
@@ -12,17 +13,20 @@ save_board([H|Rest],NLinha) :-
     save_board(Rest,NewNLinha).
 
 
-print_line([]) :- format("|",[]), nl.
-print_line([H|Rest]) :-
-    ifElse(H == 0, format("|   ", []), format("| ~w ", [H])),
-    print_line(Rest).
-
+% Prints a line separator
 print_separator(0) :- write('+'), nl.
 print_separator(SizeL) :- 
     format("+---",[]),
     NewSize is SizeL-1,
     print_separator(NewSize).
 
+% Prints a line without zeros
+print_line([]) :- format("|",[]), nl.
+print_line([H|Rest]) :-
+    ifElse(H == 0, format("|   ", []), format("| ~w ", [H])),
+    print_line(Rest).
+
+% Prints the board without zeros
 print_board([H|[]]) :-
     length(H, SizeL),
     print_separator(SizeL),
@@ -33,6 +37,7 @@ print_board([H|Rest]) :-
     print_separator(SizeL),
     print_line(H),
     print_board(Rest).
+
 
 % Draw final board - TODO -> Use fancy unicode or something
 draw_board_final([H|[]], Vars) :-
@@ -46,12 +51,14 @@ draw_board_final([H|Rest], Vars) :-
     print_line_final(H, Vars),
     draw_board_final(Rest, Vars).
 
+% Draw line in final format
 print_line_final([],_) :- format("|",[]), nl.
 print_line_final([H|Rest], Vars) :-
     ifElse(member(H,Vars), format("| ~w ", [H]), format("|   ", [])),
     print_line_final(Rest, Vars).
 
 
+% Prints the cellContent in memory
 print_mem :-
     cellContent(Val,X,Y),
     format("Val: ~w  X: ~w  Y: ~w", [Val,X,Y]), nl,
@@ -83,7 +90,7 @@ fetch_board(tab2, Tab) :-
             [3, 3, 0, 4, 4, 0, 0, 5, 5], % 8 
             [0, 3, 3, 4, 0, 0, 5, 5, 0]].% 9
 
-/*
+
 fetch_board(tab3, Tab) :-
             %1, 2, 3, 4, 5, 6, 7, 8, 9, 10 
     Tab =  [[0, 1, 0, 0, 0, 0, 0, 1, 0, 0],
@@ -96,14 +103,14 @@ fetch_board(tab3, Tab) :-
             [1, 1, 0, 0, 0, 1, 0, 0, 1, 0],
             [0, 1, 1, 0, 0, 0, 0, 1, 0, 1],
             [0, 0, 1, 1, 1, 0, 1, 0, 1, 0]].
-*/
+
+
 
 
 
 % Sets a piece in a given position
 setPeca(1, ElemCol, NewElem, [RowAtTheHead|RemainingRows], [NewRowAtTheHead|RemainingRows]):-
 	setPecaLinha(ElemCol, NewElem, RowAtTheHead, NewRowAtTheHead).
-
 setPeca(ElemRow, ElemCol, NewElem, [RowAtTheHead|RemainingRows], [RowAtTheHead|ResultRemainingRows]):-
 	ElemRow > 1,
 	ElemRow1 is ElemRow-1,

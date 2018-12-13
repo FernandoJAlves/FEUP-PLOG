@@ -51,49 +51,56 @@ get_coords_solid(SolidN, Lin, Lout) :-
     ifElse((cellContent(SolidN, X,Y), \+ member([X,Y],Lin)),(append([[X,Y]],Lin,Laux), get_coords_solid(SolidN, Laux, Lout)),Lout = Lin).
 
 
+%Checks the solid index above the current cell
 check_up(Val,X,Y,Lin,Lout) :- 
     NewX is X-1,
     NewY is Y,
     ifElse((cellContent(CellVal,NewX,NewY), \+ member(CellVal,Lin),CellVal \= Val, CellVal \= 0),(append([CellVal],Lin,Lout)),Lout = Lin).
 
+%Checks the solid index above and to the right of the current cell
 check_d1(Val,X,Y,Lin,Lout) :- 
     NewX is X-1,
     NewY is Y+1,
     ifElse((cellContent(CellVal,NewX,NewY), \+ member(CellVal,Lin),CellVal \= Val, CellVal \= 0),(append([CellVal],Lin,Lout)),Lout = Lin).
 
+%Checks the solid index to the right of the current cell
 check_right(Val,X,Y,Lin,Lout) :- 
     NewX is X,
     NewY is Y+1,
     ifElse((cellContent(CellVal,NewX,NewY), \+ member(CellVal,Lin),CellVal \= Val, CellVal \= 0),(append([CellVal],Lin,Lout)),Lout = Lin).
 
+%Checks the solid index below and to the right of the current cell
 check_d2(Val,X,Y,Lin,Lout) :- 
     NewX is X+1,
     NewY is Y+1,
     ifElse((cellContent(CellVal,NewX,NewY), \+ member(CellVal,Lin),CellVal \= Val, CellVal \= 0),(append([CellVal],Lin,Lout)),Lout = Lin).
 
+%Checks the solid index below the current cell
 check_down(Val,X,Y,Lin,Lout) :- 
     NewX is X+1,
     NewY is Y,
     ifElse((cellContent(CellVal,NewX,NewY), \+ member(CellVal,Lin),CellVal \= Val, CellVal \= 0),(append([CellVal],Lin,Lout)),Lout = Lin).
 
+%Checks the solid index below and to the left of the current cell
 check_d3(Val,X,Y,Lin,Lout) :- 
     NewX is X+1,
     NewY is Y-1,
     ifElse((cellContent(CellVal,NewX,NewY), \+ member(CellVal,Lin),CellVal \= Val, CellVal \= 0),(append([CellVal],Lin,Lout)),Lout = Lin).
 
+%Checks the solid index to the left of the current cell
 check_left(Val,X,Y,Lin,Lout) :- 
     NewX is X,
     NewY is Y-1,
     ifElse((cellContent(CellVal,NewX,NewY), \+ member(CellVal,Lin),CellVal \= Val, CellVal \= 0),(append([CellVal],Lin,Lout)),Lout = Lin).
 
+%Checks the solid index above and to the left of the current cell
 check_d4(Val,X,Y,Lin,Lout) :- 
     NewX is X-1,
     NewY is Y-1,
     ifElse((cellContent(CellVal,NewX,NewY), \+ member(CellVal,Lin),CellVal \= Val, CellVal \= 0),(append([CellVal],Lin,Lout)),Lout = Lin).
 
 
-
-% Checks all directions
+% Checks all directions for the cell contents and adds to the array of indeces nearby
 check_all_directions(Val,X,Y,Lin,OutList) :-
     check_up(Val,X,Y,Lin,Aux1),
     check_d1(Val,X,Y,Aux1,Aux2),
@@ -112,9 +119,7 @@ iterate_solid([Point|Rest], Val, Lin, VarsList) :-
     Aux = [Y|_],
     %format("X: ~w   Y: ~w  ", [X,Y]), nl,
     check_all_directions(Val,X,Y,Lin,OutList),
-
     %format("Near Solids: ~w ", [OutList]), nl,
-
     iterate_solid(Rest, Val, OutList, VarsList).
 
 
@@ -141,13 +146,13 @@ fill_board([H|Rest], Nvars, InTab, OutTab) :-
 
     fill_board(Rest, Nvars, AuxTab, OutTab).
 
+
 % Extrai os indices dos solidos selecionados
 extractSolidIndexes([], _, OutList, OutList).
 extractSolidIndexes([H|Rest], SolidN, InList, OutList) :-
     ifElse(H #= 1, append(InList, [SolidN], AuxList), AuxList = InList),
     NewN is SolidN + 1,
     extractSolidIndexes(Rest, NewN, AuxList, OutList).
-
 
 
 % Processa o board para devolver no input necessário para o solver
@@ -174,7 +179,7 @@ cm(Vars, TabName) :-
 
     retractall(cellContent(Val,X,Y)), % To erase values from previous executions
 
-    fetch_board(TabName,OriginalTab),
+    fetch_board(TabName,OriginalTab), % Get the board in memory
 
     nl, format("Initial Board: ",[]), nl,
     print_board(OriginalTab),
@@ -183,44 +188,57 @@ cm(Vars, TabName) :-
 
     nl, format("Board Selected, press enter to continue to solver ",[]), nl,
     read_line(_),
-
-    %nl, format("Processed Board: ",[]), nl,
-    %print_board(Tab),
  
     length(Tab,Nvars),  % Defines size of Nvars
     length(Vars,Nvars), % Defines size of the Vars list
     domain(Vars,0,1),   % Defines the domain of every element of Vars
     
-    check_board(Vars,Vars,Tab,Nvars),
+    check_board(Vars,Vars,Tab,Nvars), % Solver (!)
+    sum(Vars,#=,Sum), !, % Final restriction used to get the best answer
 
-    sum(Vars,#=,Sum), !,
-
-    extractSolidIndexes(Vars, 1, [], IndexList),
-
-    %format("Indexes: ~w", [IndexList]), nl,
+    extractSolidIndexes(Vars, 1, [], IndexList), % Get the solids that are in the best answer
 
     nl, format("Final Board: ",[]), nl,
     draw_board_final(OriginalTab, IndexList),
-
 
     labeling([maximize(Sum)], Vars).
 
     
        
-
+% Solver for the board
 check_board(_,[],[],_).
 check_board(Vars,[Hvars|Rvars],[Htab|Rtab],Nvars) :- 
     length(Lsum,Nvars),
     check_line(Hvars,Vars,Htab,Lsum), sum(Lsum,#=,0),
     check_board(Vars,Rvars,Rtab,Nvars).
 
-
+% Solver for a line
 check_line(_,[],[],[]).
 check_line(Var,[Hvar|Rvar],[Hline|Rline],[Hout|Rout]) :-
     (Var * Hvar * Hline) #= Hout,
     check_line(Var,Rvar,Rline,Rout).
 
-% Fim do solver
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -252,3 +270,18 @@ num_solids(OutList) :-
             [0, 0, 0, 0, 0]].
 
 */
+
+/*
+            %1, 2, 3, 4, 5, 6, 7, 8, 9, 10 
+    Tab =  [[0, 1, 0, 0, 0, 0, 0, 1, 0, 0],
+            [1, 0, 1, 0, 0, 0, 0, 1, 1, 0],
+            [0, 1, 0, 1, 0, 0, 0, 0, 1, 1],
+            [0, 0, 1, 0, 1, 0, 0, 0, 0, 1],
+            [0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+            [0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 1, 0, 0, 0, 1, 0, 0, 1, 0],
+            [0, 1, 1, 0, 0, 0, 0, 1, 0, 1],
+            [0, 0, 1, 1, 1, 0, 1, 0, 1, 0]].
+*/
+
