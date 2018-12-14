@@ -1,0 +1,54 @@
+Exercicios:
+    - PLOP 2 (carteiro preguiçoso)
+    - tarefas
+
+Restriçoes de otimizaçao
+    - maximum(Value, List)
+    - minimum(Value, List)
+
+Restriçoes combinatorias
+    - cumulative(Tasks, Options)
+        -> Tasks = list of task(Si,Di,Ei,Hi,Ti) (StartTime, Non-Negative-Duration, EndTime, ReqResources, TaskId)
+        -> Options = list
+            - limit(L), L = 1 (default)
+
+    - cumulatives(Tasks, Machines, Options)
+        -> Tasks = list of task(Si,Di,Ei,Hi,MachineId)
+        -> Machines = list of machine(Mi,Bi)
+        -> Options = list
+            - bound(D), D = lower(default), upper
+    
+Labeling
+
+    labeling(Options, Vars),
+
+    Seleção da prox variavel:
+        - leftmost (default)
+        - min/max
+        - ff/ffc 
+        - occurrence
+        - max_regret
+        - anti_first_fail
+        - variable(Sel)
+
+    Escolha de valores
+        - step (default)
+        - enum
+        - bisect
+        - value (enum)
+        - median, middle
+
+    Misc
+        - up (default)
+        - down
+
+    Apresentação de solução
+        - satisfy
+        - minimize(X)
+        - maximize(X)
+        - best 
+        - all
+        - (Ver resto...)
+
+    Outros
+        - time_out(Time, Flags) -> Flags: success, time_out, ...

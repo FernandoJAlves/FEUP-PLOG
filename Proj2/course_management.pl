@@ -199,10 +199,17 @@ cm(Vars, TabName) :-
     extractSolidIndexes(Vars, 1, [], IndexList), % Get the solids that are in the best answer
 
     nl, format("Final Board: ",[]), nl,
-    draw_board_final(OriginalTab, IndexList),
+    draw_board_final(OriginalTab, IndexList), !,
 
     labeling([maximize(Sum)], Vars).
 
+
+% Versao do solver em que o board é gerado dinamicamente
+cm(din, NLinhas, NColunas) :-
+    create_empty_board(NLinhas, NColunas, [], EmptyTab),
+    
+    print_board(EmptyTab),
+    true.
     
        
 % Solver for the board
@@ -219,69 +226,4 @@ check_line(Var,[Hvar|Rvar],[Hline|Rline],[Hout|Rout]) :-
     check_line(Var,Rvar,Rline,Rout).
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-num_solids(OutList) :-
-    cellContent(Val,X,Y),
-    NewList = VarList,
-    ifElse(member(Val,VarList), true,(format("Val: ~w", [Val]),nl, append([Val],NewList, VarList))),
-    format("Varlist: ~w   ", [VarList]),
-    fail; true.
-*/
-
-/*
-            %1, 2, 3, 4, 5, 6, 7 
-    Tab =  [[0, 1, 0, 1, 0, 0 ,0],
-            [1, 0, 1, 0, 0, 1 ,0],
-            [0, 1, 0, 0, 0, 1 ,0],
-            [1, 0, 0, 0, 1, 1 ,0],
-            [0, 0, 0, 1, 0, 1 ,0],
-            [0, 1, 1, 1, 1, 0 ,1],
-            [0, 0, 0, 0, 0, 1 ,0]].
-*/
-
-/*
-    Tab =  [[0, 0, 0, 0, 0],
-            [0, 0, 1, 0, 0],
-            [0, 1, 0, 1, 0],
-            [0, 0, 1, 0, 0],
-            [0, 0, 0, 0, 0]].
-
-*/
-
-/*
-            %1, 2, 3, 4, 5, 6, 7, 8, 9, 10 
-    Tab =  [[0, 1, 0, 0, 0, 0, 0, 1, 0, 0],
-            [1, 0, 1, 0, 0, 0, 0, 1, 1, 0],
-            [0, 1, 0, 1, 0, 0, 0, 0, 1, 1],
-            [0, 0, 1, 0, 1, 0, 0, 0, 0, 1],
-            [0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
-            [0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 1, 0, 0, 0, 1, 0, 0, 1, 0],
-            [0, 1, 1, 0, 0, 0, 0, 1, 0, 1],
-            [0, 0, 1, 1, 1, 0, 1, 0, 1, 0]].
-*/
 
