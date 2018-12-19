@@ -13,6 +13,28 @@ save_board([H|Rest],NLinha) :-
     save_board(Rest,NewNLinha).
 
 
+% Prints information in memory in a line format
+print_mem_line(CurrL, MaxC, MaxC) :-
+    cellContent(Val,CurrL,MaxC),
+    ifElse(Val == 0, format("|   |", []), format("| ~16R |", [Val])), nl.
+print_mem_line(CurrL, CurrC, MaxC) :-
+    cellContent(Val,CurrL,CurrC),
+    ifElse(Val == 0, format("|   ", []), format("| ~16R ", [Val])),
+    NewC is CurrC+1,
+    print_mem_line(CurrL, NewC, MaxC).
+
+% Prints information in memory in a board format
+print_mem_board(MaxL, MaxL, MaxC) :-
+    print_separator(MaxC),
+    print_mem_line(MaxL, 1, MaxC),
+    print_separator(MaxC).
+print_mem_board(CurrL, MaxL, MaxC) :-
+    print_separator(MaxC),
+    print_mem_line(CurrL, 1, MaxC),
+    NewL is CurrL+1,
+    print_mem_board(NewL, MaxL, MaxC).
+    
+
 % Prints a line separator
 print_separator(0) :- write('+'), nl.
 print_separator(SizeL) :- 
@@ -37,6 +59,31 @@ print_board([H|Rest]) :-
     print_separator(SizeL),
     print_line(H),
     print_board(Rest).
+
+
+
+
+% Prints information in memory in a line format
+print_mem_line_final(CurrL, MaxC, MaxC, Vars) :-
+    cellContent(Val,CurrL,MaxC),
+    ifElse(\+ member(Val,Vars), format("|   |", []), format("| ~16R |", [Val])), nl.
+print_mem_line_final(CurrL, CurrC, MaxC, Vars) :-
+    cellContent(Val,CurrL,CurrC),
+    ifElse(\+ member(Val,Vars), format("|   ", []), format("| ~16R ", [Val])),
+    NewC is CurrC+1,
+    print_mem_line_final(CurrL, NewC, MaxC, Vars).
+
+% Prints information in memory in a board format
+draw_mem_final(MaxL, MaxL, MaxC, Vars) :-
+    print_separator(MaxC),
+    print_mem_line_final(MaxL, 1, MaxC, Vars),
+    print_separator(MaxC).
+draw_mem_final(CurrL, MaxL, MaxC, Vars) :-
+    print_separator(MaxC),
+    print_mem_line_final(CurrL, 1, MaxC, Vars),
+    NewL is CurrL+1,
+    draw_mem_final(NewL, MaxL, MaxC, Vars).
+
 
 
 % Draw final board - TODO -> Use fancy unicode or something

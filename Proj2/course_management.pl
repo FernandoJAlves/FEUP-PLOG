@@ -1,8 +1,10 @@
 
 :- include('board_printer.pl').
+:- include('piece_templates.pl').
 
 :- use_module(library(clpfd)).
 :- use_module(library(lists)).
+:- use_module(library(random)).
 
 % cellContent(Value,Linha,Coluna)
 :- dynamic cellContent/3.
@@ -173,9 +175,44 @@ process_board(OriginalTab, Tab) :-
 
     fill_board(VarsList, Nvars, EmptyTab, Tab).
 
+% Processa o board dinamico para devolver no input necessário para o solver
+process_board_din(Nvars, Tab) :-
+    
+    length(VarsList, Nvars),
+
+    create_solids_list(VarsList, 1),
+    
+    %format("VarsList: ~w~n", [VarsList]),
+
+    create_empty_board(Nvars, Nvars, [], EmptyTab),
+
+    fill_board(VarsList, Nvars, EmptyTab, Tab).
+
+
+% Creates the list of solid indexes used in process_board_din
+create_solids_list([],_).
+create_solids_list([H|Rest], CurrentN) :-
+    H = CurrentN,
+    NewN is CurrentN+1,
+    create_solids_list(Rest, NewN).
+
+
+% Randomly places pieces in a dynamic generated board
+placePieces(_, _, _, SolidCounter, 50, NVars) :- NVars is SolidCounter-1. % End after 50 failed attempts
+placePieces(IdPeca, NLinhas, NColunas, SolidCounter, ErrorCount, NVars) :-
+    NewL is NLinhas + 1,
+    NewC is NColunas + 1,
+    random(1, NewL, Lcoord),
+    random(1, NewC, Ccoord),
+    random(0, 4, Orientation),
+    ifElse((canPlace(IdPeca,Lcoord,Ccoord,SolidCounter,Orientation)),(NewCount = 0, NewSolidC is SolidCounter+1), (NewCount is ErrorCount+1, NewSolidC = SolidCounter)),
+    
+    placePieces(IdPeca,NLinhas, NColunas, NewSolidC, NewCount, NVars).
+
+
 
 % Versao do solver em que o user escolhe um board pelo nome
-cm(Vars, TabName) :- 
+cm(Vars, TabName, Sum) :- 
 
     retractall(cellContent(Val,X,Y)), % To erase values from previous executions
 
@@ -196,20 +233,54 @@ cm(Vars, TabName) :-
     check_board(Vars,Vars,Tab,Nvars), % Solver (!)
     sum(Vars,#=,Sum), !, % Final restriction used to get the best answer
 
+    labeling([], Vars),
+
     extractSolidIndexes(Vars, 1, [], IndexList), % Get the solids that are in the best answer
 
     nl, format("Final Board: ",[]), nl,
-    draw_board_final(OriginalTab, IndexList), !,
+    draw_board_final(OriginalTab, IndexList), !.
 
-    labeling([maximize(Sum)], Vars).
+
+    
+
+
+
+
 
 
 % Versao do solver em que o board é gerado dinamicamente
-cm(din, NLinhas, NColunas) :-
-    create_empty_board(NLinhas, NColunas, [], EmptyTab),
+cm(din, NLinhas, NColunas, Nsolids, IdPeca) :-
     
-    print_board(EmptyTab),
-    true.
+    retractall(cellContent(Val,X,Y)),
+
+    create_empty_board(NLinhas, NColunas, [], EmptyTab),
+    save_board(EmptyTab, 1),
+    
+    placePieces(IdPeca, NLinhas, NColunas, 1, 0, Nvars), % Places pieces in random positions to make a random board
+
+    print_mem_board(1, NLinhas, NColunas),
+
+    process_board_din(Nvars, Tab), % Converts the board to a input that the solver understands
+
+    nl, format("Dynamic Board Generated, please enter the number of solids wanted in the solution ",[]), nl,
+    read(Sum),
+ 
+    format("Sum ~w~n", [Sum]),
+    format("Nvars ~w~n", [Nvars]),
+    length(Vars,Nvars), % Defines size of the Vars list
+    domain(Vars,0,1),   % Defines the domain of every element of Vars
+    
+    check_board(Vars,Vars,Tab,Nvars), % Solver (!)
+    sum(Vars,#=,Sum), !, % Final restriction used to get the best answer
+    labeling([], Vars),
+
+    extractSolidIndexes(Vars, 1, [], IndexList), % Get the solids that are in the best answer
+
+    format("Vars: ~w~n", [Vars]),
+    format("Indexlist: ~w~n", [IndexList]),
+
+    nl, format("Final Board: ",[]), nl,
+    draw_mem_final(1, NLinhas, NColunas, IndexList), !.
     
        
 % Solver for the board
