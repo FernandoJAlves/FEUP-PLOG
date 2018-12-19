@@ -16,10 +16,10 @@ save_board([H|Rest],NLinha) :-
 % Prints information in memory in a line format
 print_mem_line(CurrL, MaxC, MaxC) :-
     cellContent(Val,CurrL,MaxC),
-    ifElse(Val == 0, format("|   |", []), format("| ~16R |", [Val])), nl.
+    ifElse(Val == 0, format("|   |", []), format("| ~36R |", [Val])), nl.
 print_mem_line(CurrL, CurrC, MaxC) :-
     cellContent(Val,CurrL,CurrC),
-    ifElse(Val == 0, format("|   ", []), format("| ~16R ", [Val])),
+    ifElse(Val == 0, format("|   ", []), format("| ~36R ", [Val])),
     NewC is CurrC+1,
     print_mem_line(CurrL, NewC, MaxC).
 
@@ -66,10 +66,10 @@ print_board([H|Rest]) :-
 % Prints information in memory in a line format
 print_mem_line_final(CurrL, MaxC, MaxC, Vars) :-
     cellContent(Val,CurrL,MaxC),
-    ifElse(\+ member(Val,Vars), format("|   |", []), format("| ~16R |", [Val])), nl.
+    ifElse(\+ member(Val,Vars), format("|   |", []), format("| ~36R |", [Val])), nl.
 print_mem_line_final(CurrL, CurrC, MaxC, Vars) :-
     cellContent(Val,CurrL,CurrC),
-    ifElse(\+ member(Val,Vars), format("|   ", []), format("| ~16R ", [Val])),
+    ifElse(\+ member(Val,Vars), format("|   ", []), format("| ~36R ", [Val])),
     NewC is CurrC+1,
     print_mem_line_final(CurrL, NewC, MaxC, Vars).
 
