@@ -212,7 +212,7 @@ placePieces(IdPeca, NLinhas, NColunas, SolidCounter, ErrorCount, NVars) :-
 
 
 % Versao do solver em que o user escolhe um board pelo nome
-cm(Vars, TabName, Sum) :- 
+cm(TabName, Sum, Vars) :- 
 
     retractall(cellContent(Val,X,Y)), % To erase values from previous executions
 
@@ -255,7 +255,7 @@ cm(din, NLinhas, NColunas, Nsolids, IdPeca) :-
 
     process_board_din(Nvars, Tab), % Converts the board to a input that the solver understands
 
-    nl, format("Dynamic Board Generated, please enter the number of solids wanted in the solution ",[]), nl,
+    nl, format("Dynamic Board with ~w Solids Generated, please enter the number of solids wanted in the solution ",[Nvars]), nl,
     read(Sum),
 
     length(Vars,Nvars), % Defines size of the Vars list
