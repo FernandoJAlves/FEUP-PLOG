@@ -261,9 +261,13 @@ cm(din, NLinhas, NColunas, Nsolids, IdPeca) :-
     length(Vars,Nvars), % Defines size of the Vars list
     domain(Vars,0,1),   % Defines the domain of every element of Vars
     
+    format("Point 1 ~n",[]),
     check_board(Vars,Vars,Tab,Nvars), % Solver (!)
+    format("Point 2 ~n",[]),
     sum(Vars,#=,Sum), !, % Final restriction used to get the best answer
-    labeling([], Vars),
+    format("Point 3 ~n",[]),
+    labeling([anti_first_fail], Vars),
+    format("Point 4 ~n",[]),
 
     extractSolidIndexes(Vars, 1, [], IndexList), % Get the solids that are in the best answer
 
