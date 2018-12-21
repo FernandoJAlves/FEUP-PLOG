@@ -115,6 +115,8 @@ print_mem :-
 ifElse(C,G,E) :- C, !, G.
 ifElse(C,G,E) :- E.
 
+
+% Gets the board specified in its first argument
 fetch_board(tab1, Tab) :-
 
     Tab =  [[1,1,2,2,0,0,3,3],

@@ -1,5 +1,5 @@
 
-
+% Checks if a piece of given ID can be placed at given coordinates
 canPlace(0,LinCoord, ColCoord,SolidN, 0) :-
     Lcoord1 is LinCoord, Ccoord1 is ColCoord,
     Lcoord2 is LinCoord, Ccoord2 is ColCoord+1,
