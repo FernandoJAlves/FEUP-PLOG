@@ -210,9 +210,24 @@ placePieces(IdPeca, NLinhas, NColunas, SolidCounter, ErrorCount, NVars) :-
     placePieces(IdPeca,NLinhas, NColunas, NewSolidC, NewCount, NVars).
 
 
+readInput(Sum) :-
+    read(Sum).
+
+/*
+interpretAux(X,Num):-
+    length(X,L),
+    checkLength(L),
+    number_codes(N,X),
+    Num is N,
+    ifElse(N > 19,(write('Invalid Input: You have to select one position between 1 and 19'),nl,fail),true).
+
+checkLength(0) :- write('You have to select one position between 1 and 19'),nl,fail.
+checkLength(_).
+*/
+
 
 % Versao do solver em que o user escolhe um board pelo nome
-cm(TabName, Sum, Vars) :- 
+cm(TabName) :- 
 
     retractall(cellContent(Val,X,Y)), % To erase values from previous executions
 
@@ -223,10 +238,11 @@ cm(TabName, Sum, Vars) :-
 
     process_board(OriginalTab, Tab), % Converts the board to a input that the solver understands
 
-    nl, format("Board Selected, press enter to continue to solver ",[]), nl,
-    read_line(_),
+    length(Tab,Nvars),  % Defines value of Nvars
+
+    nl, format("Board with ~w pieces Selected, please enter the number of solids wanted in the solution ",[Nvars]), nl,
+    readInput(Sum),
  
-    length(Tab,Nvars),  % Defines size of Nvars
     length(Vars,Nvars), % Defines size of the Vars list
     domain(Vars,0,1),   % Defines the domain of every element of Vars
     
@@ -235,14 +251,14 @@ cm(TabName, Sum, Vars) :-
 
     labeling([], Vars),
 
-    extractSolidIndexes(Vars, 1, [], IndexList), % Get the solids that are in the best answer
+    extractSolidIndexes(Vars, 1, [], IndexList), % Get the solids' indexes that are in the best answer
 
     nl, format("Final Board: ",[]), nl,
     draw_board_final(OriginalTab, IndexList), !.
 
 
 % Versao do solver em que o board é gerado dinamicamente
-cm(din, NLinhas, NColunas, Nsolids, IdPeca) :-
+cm(din, NLinhas, NColunas, IdPeca) :-
     
     retractall(cellContent(Val,X,Y)),
 
@@ -256,7 +272,7 @@ cm(din, NLinhas, NColunas, Nsolids, IdPeca) :-
     process_board_din(Nvars, Tab), % Converts the board to a input that the solver understands
 
     nl, format("Dynamic Board with ~w Solids Generated, please enter the number of solids wanted in the solution ",[Nvars]), nl,
-    read(Sum),
+    readInput(Sum),
 
     length(Vars,Nvars), % Defines size of the Vars list
     domain(Vars,0,1),   % Defines the domain of every element of Vars
