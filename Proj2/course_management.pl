@@ -210,20 +210,30 @@ placePieces(IdPeca, NLinhas, NColunas, SolidCounter, ErrorCount, NVars) :-
     placePieces(IdPeca,NLinhas, NColunas, NewSolidC, NewCount, NVars).
 
 
+% Reads input
 readInput(Sum) :-
-    read(Sum).
-
-/*
-interpretAux(X,Num):-
-    length(X,L),
+    read_line(Line),
+    length(Line,L),
     checkLength(L),
-    number_codes(N,X),
-    Num is N,
-    ifElse(N > 19,(write('Invalid Input: You have to select one position between 1 and 19'),nl,fail),true).
+    checkCharList(Line),
+    number_codes(N,Line),
+    Sum is N;
+    readInput(Sum).
 
-checkLength(0) :- write('You have to select one position between 1 and 19'),nl,fail.
-checkLength(_).
-*/
+
+% Checks if every char is a number
+checkCharList([]).
+checkCharList([Code|Rest]) :-
+		char_code(Char,Code),
+		ifElse(
+			(Char @>= '0', Char @=< '9'), 
+			(true,checkCharList(Rest)),
+			(write('Invalid Input: You must choose a number larger than 0'),nl,fail)
+		).
+
+% Checks if the input has at least 1 char
+checkLength(N) :- N > 0.
+checkLength(0) :- write('Invalid Input: You must choose a number with at least 1 digit'),nl,fail.
 
 
 % Versao do solver em que o user escolhe um board pelo nome
