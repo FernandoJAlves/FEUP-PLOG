@@ -136,11 +136,11 @@ setBoardVars([H|Rest], CurrLine, InTab, OutTab) :-
 fill_board([], _, Tab, Tab).
 fill_board([H|Rest], Nvars, InTab, OutTab) :- 
     
-    get_coords_solid(H,[],Coords), /*TODO - Changes 1 to H*/ 
+    get_coords_solid(H,[],Coords),
 
     %nl, format("Lout: ~w ", [Coords]), nl,
 
-    iterate_solid(Coords, H, [], VarsList), /*TODO - Changes 1 to H*/ 
+    iterate_solid(Coords, H, [], VarsList),
 
     %format("~w - Near Vars: ~w  ", [H,VarsList]), nl,
 
@@ -259,7 +259,7 @@ cm(TabName) :-
     check_board(Vars,Vars,Tab,Nvars), % Solver (!)
     sum(Vars,#=,Sum), !, % Final restriction used to get the best answer
 
-    labeling([], Vars),
+    labeling([occurrence, median], Vars),
 
     extractSolidIndexes(Vars, 1, [], IndexList), % Get the solids' indexes that are in the best answer
 
@@ -287,13 +287,9 @@ cm(din, NLinhas, NColunas, IdPeca) :-
     length(Vars,Nvars), % Defines size of the Vars list
     domain(Vars,0,1),   % Defines the domain of every element of Vars
     
-    format("Point 1 ~n",[]),
     check_board(Vars,Vars,Tab,Nvars), % Solver (!)
-    format("Point 2 ~n",[]),
     sum(Vars,#=,Sum), !, % Final restriction used to get the best answer
-    format("Point 3 ~n",[]),
-    labeling([anti_first_fail], Vars),
-    format("Point 4 ~n",[]),
+    labeling([occurrence, median], Vars),
 
     extractSolidIndexes(Vars, 1, [], IndexList), % Get the solids that are in the best answer
 

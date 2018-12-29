@@ -1,4 +1,10 @@
 
+% Prints a line separator
+print_separator(0) :- write('+'), nl.
+print_separator(SizeL) :- 
+    format("+----",[]),
+    NewSize is SizeL-1,
+    print_separator(NewSize).
 
 
 % Prints information in memory in a line format
@@ -29,13 +35,6 @@ print_mem_board(CurrL, MaxL, MaxC) :-
     print_mem_board(NewL, MaxL, MaxC).
     
 
-% Prints a line separator
-print_separator(0) :- write('+'), nl.
-print_separator(SizeL) :- 
-    format("+----",[]),
-    NewSize is SizeL-1,
-    print_separator(NewSize).
-
 % Prints a line without zeros
 print_line([]) :- format("|",[]), nl.
 print_line([H|Rest]) :-
@@ -56,8 +55,6 @@ print_board([H|Rest]) :-
     print_separator(SizeL),
     print_line(H),
     print_board(Rest).
-
-
 
 
 % Prints information in memory in a line format
@@ -88,8 +85,16 @@ draw_mem_final(CurrL, MaxL, MaxC, Vars) :-
     draw_mem_final(NewL, MaxL, MaxC, Vars).
 
 
+% Draw line in final format
+print_line_final([],_) :- format("|",[]), nl.
+print_line_final([H|Rest], Vars) :-
+    U_Val is H mod 35,
+    D_Val is H // 35,
+    ifElse((D_Val == 0; \+ member(H,Vars)), format("|  ", []), format("| ~36R", [D_Val])),
+    ifElse(((D_Val == 0, U_Val == 0); \+ member(H,Vars)), format("  ", []), format("~36R ", [U_Val])),
+    print_line_final(Rest, Vars).
 
-% Draw final board - TODO -> Use fancy unicode or something
+% Draw final board 
 draw_board_final([H|[]], Vars) :-
     length(H, SizeL),
     print_separator(SizeL),
@@ -100,15 +105,6 @@ draw_board_final([H|Rest], Vars) :-
     print_separator(SizeL),
     print_line_final(H, Vars),
     draw_board_final(Rest, Vars).
-
-% Draw line in final format
-print_line_final([],_) :- format("|",[]), nl.
-print_line_final([H|Rest], Vars) :-
-    U_Val is H mod 35,
-    D_Val is H // 35,
-    ifElse((D_Val == 0; \+ member(H,Vars)), format("|  ", []), format("| ~36R", [D_Val])),
-    ifElse(((D_Val == 0, U_Val == 0); \+ member(H,Vars)), format("  ", []), format("~36R ", [U_Val])),
-    print_line_final(Rest, Vars).
 
 
 % Prints the cellContent in memory
